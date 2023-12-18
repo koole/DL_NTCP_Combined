@@ -764,7 +764,7 @@ def learning_rate_finder(model, train_dataloader, val_dataloader, optimizer, opt
                                    criterion=loss_function, data_aug_p=data_aug_p, data_aug_strength=data_aug_strength,
                                    perform_augmix=perform_augmix, mixture_width=mixture_width,
                                    mixture_depth=mixture_depth, augmix_strength=augmix_strength,
-                                   mean=mean, std=std,
+                                   #mean=mean, std=std,
                                    grad_max_norm=grad_max_norm, device=device, logger=logger)
 
     # Run test

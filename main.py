@@ -3,6 +3,7 @@ Script for developing deep learning models via cross-validation, ensembling the 
 independently testing the final ensemble model.
 """
 import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 import time
 import torch
 import shutil
@@ -719,8 +720,8 @@ if __name__ == '__main__':
         model.to(device=device)
 
         # Compile model (PyTorch 2)
-        if torch_version.startswith('2.'):
-            model = torch.compile(model)
+        #if torch_version.startswith('2.'):
+        #    model = torch.compile(model)
 
         # Weight initialization
         if 'selu' in model_name:

@@ -37,7 +37,7 @@ models_dir = os.path.join(root_path, 'models')
 optimizers_dir = os.path.join(root_path, 'optimizers')
 data_preproc_dir = os.path.join(root_path, 'data_preproc')
 save_root_dir = os.path.join(root_path, 'datasets')
-data_dir = os.path.join(save_root_dir, 'dataset_old_v2')
+data_dir = os.path.join(save_root_dir, 'dataset_new')
 exp_root_dir = os.path.join(root_path, 'experiments', 'test')
 create_folder_if_not_exists(exp_root_dir)
 exp_name = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -75,7 +75,7 @@ cudnn_benchmark = False  # True if gpu_condition else False  # `True` will be fa
 train_frac = 0.7  # training-internal_validation-test split. The same test set will be used for Cross-Validation.
 val_frac = 0.15  # training-internal_validation-test split. The same test set will be used for Cross-Validation.
 sampling_type = 'stratified'  # ['random', 'stratified']. Method for dataset splitting.
-perform_stratified_sampling_full = True  # (Stratified Sampling). Whether or not to recreate stratified_sampling_full.csv.
+perform_stratified_sampling_full = False  # (Stratified Sampling). Whether or not to recreate stratified_sampling_full.csv.
 # Note: if stratified_sampling_full.csv does not exist, then we will perform stratified sampling to create the file.
 strata_groups = ['HN35_Xerostomia_M12_class', 'CT+C_available', 'CT_Artefact', 'Photons', 'Loctum2_v2']  #, 'Year_treatment_2cat']  # (Stratified Sampling). Note: order does not matter.
 split_col = 'Split'  # (Stratified Sampling). Column of the stratified sampling outcome ('train', 'val', 'test').
@@ -105,6 +105,7 @@ concat_key = 'ct_dose_seg'  # Do not change
 perform_data_aug = True
 rand_cropping_size = [96, 96, 96]  # (REDUNDANT)  # OLD [100, 100, 100]  # (only for training data)
 input_size = [96, 96, 96]  # OLD [100, 100, 100]  # if rand_cropping_size==input_size, then no resizing will be applied
+
 resize_mode = 'area'  # (only if perform_resize=True). Algorithm used for upsampling.
 # CT
 ct_a_min = -200  # OLD data_preproc_config.ct_min if data_preproc_config.perform_clipping else None
@@ -164,6 +165,8 @@ model_name = 'dcnn_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'c
 n_input_channels = 3  # CT, RTDOSE and Segmentation_map
 features_dl = ['HN35_Xerostomia_W01_not_at_all', 'HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe',
                'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
+features_dl = ['HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe']
+              # 'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
 resnet_shortcut = 'B'  # (resnet_original) 'A', 'B'. Pretrained resnet10_original has 'B', resnet18_original has 'A'.
 filters = [8, 8, 16, 16, 32]
 kernel_sizes = [7, 5, 4, 3, 3]
@@ -260,9 +263,9 @@ figsize = (12, 12)
 
 if perform_test_run:
     lr_finder_num_iter = 0
-    n_samples = 40
+    n_samples = 50
     nr_runs = 1
-    max_epochs = 1
+    max_epochs = 2
     train_frac = 0.33
     val_frac = 0.33
     cv_folds = 1
