@@ -165,8 +165,10 @@ model_name = 'dcnn_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'c
 n_input_channels = 3  # CT, RTDOSE and Segmentation_map
 features_dl = ['HN35_Xerostomia_W01_not_at_all', 'HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe',
                'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
-features_dl = ['HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe']
+features_dl = ['HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe','Submandibular_meandose','Parotid_meandose_adj']
               # 'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
+
+
 resnet_shortcut = 'B'  # (resnet_original) 'A', 'B'. Pretrained resnet10_original has 'B', resnet18_original has 'A'.
 filters = [8, 8, 16, 16, 32]
 kernel_sizes = [7, 5, 4, 3, 3]
