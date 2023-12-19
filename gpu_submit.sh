@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=Xerostomia
+#SBATCH --job-name=Xerostomia_1
 #SBATCH --mail-type=END
-#SBATCH --mail-user=d.h.chu@rug.nl
+#SBATCH --mail-user=d.macrae@student.rug.nl
 #SBATCH --time=23:59:59
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:v100:1
