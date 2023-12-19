@@ -29,7 +29,7 @@ import data_preproc.data_preproc_config as data_preproc_config
 from data_preproc.data_preproc_functions import create_folder_if_not_exists
 
 # Whether to perform quick run for checking workability of code or not
-perform_test_run = True
+perform_test_run = False
 
 # Set directory contexts
 root_path = os.getcwd()
