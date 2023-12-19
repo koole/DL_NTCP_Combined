@@ -15,10 +15,10 @@ module purge
 #module load fosscuda/2020b
 module load  OpenCV/4.6.0-foss-2022a-contrib
 module load Python/3.11.3-GCCcore-12.3.0
-python3 -m venv /data/$USER/.envs/HNC_env
-source /data/$USER/.envs/HNC_env/bin/activate
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118pip3 install pyparsing six python-dateutil
-pip3 install torchinfo tqdm monai pytz SimpleITK pydicom scikit-image matplotlib
+python3 -m venv /scratch/$USER/.envs/HNC_env
+source /scratch/$USER/.envs/HNC_env/bin/activate
+pip3 install torchvision torchaudio
+pip3 install torchinfo tqdm monai pytz SimpleITK pydicom scikit-image matplotlib numpy
 pip3 install torch_optimizer
 pip3 install scikit-learn
 pip3 install timm
@@ -36,7 +36,7 @@ pip3 install timm
 ## Activate local python environment
 
 
-#source /data/$USER/.envs/HNC_env/bin/activate
+#source /scratch/$USER/.envs/HNC_env/bin/activate
 
 # Train
 python3 main.py
