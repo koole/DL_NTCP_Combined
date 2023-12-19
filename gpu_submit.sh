@@ -5,7 +5,7 @@
 #SBATCH --mail-user=d.macrae@student.rug.nl
 #SBATCH --time=23:59:59
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:v100:1
+#SBATCH --gres=gpu:1
 #SBATCH --mem=64G
 #SBATCH --output=slurm-%j.log
 
