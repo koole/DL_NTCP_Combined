@@ -29,7 +29,7 @@ import data_preproc.data_preproc_config as data_preproc_config
 from data_preproc.data_preproc_functions import create_folder_if_not_exists
 
 # Whether to perform quick run for checking workability of code or not
-perform_test_run = True
+perform_test_run = False
 
 # Set directory contexts
 root_path = os.getcwd()
@@ -152,10 +152,10 @@ ct_dose_seg_interpol_mode_2d = 'bilinear'
 perform_augmix = True
 mixture_width = 3  # 3 (default)
 mixture_depth = [1, 3]  # [1, 3] (default)
-augmix_strength = 3
+augmix_strength = 1
 
 # Deep Learning model config
-model_name = 'dcnn_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'convnext_base',
+model_name = 'resnet_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'convnext_base',
 # 'dcnn_lrelu', 'dcnn_dws_lrelu', 'dcnn_lrelu_gn', 'dcnn_lrelu_ln', 'dcnn_selu', 'efficientnet-b0', 'efficientnet-b1',
 # ..., 'efficientnet-b8', 'efficientnetv2_xs', 'efficientnetv2_s', 'efficientnetv2_m', 'efficientnetv2_l',
 # 'efficientnetv2_xl', 'efficientnetv2_s_selu', 'efficientnetv2_m_selu', 'efficientnetv2_l_selu',
@@ -180,7 +180,7 @@ pooling_conv_filters = None  # Either int or None (i.e. no pooling conv before f
 perform_pooling = False  # Whether to perform (Avg)Pooling or not. If pooling_conv_filters is not None, then
 # (Avg)Pooling will not be applied.
 linear_units = [16]
-dropout_p = [0]  # Should have the same length as `linear_units`
+dropout_p = [0.25]  # Should have the same length as `linear_units`
 clinical_variables_position = 0  # (Only if len(features_dl) > 0.) -1 | 0 | 1 | 2 | ... The position is in line with
 # `clinical_variables_linear_units`, e.g., 0 means that the clinical variables MLP will be added to the first linear
 # layer of `clinical_variables_linear_units`. Note: -1 means that the clinical variables MLP will be added to the layer
@@ -212,7 +212,7 @@ hessian_power = 1.0  # (AdaHessian)
 use_lookahead = False  # (Lookahead)
 lookahead_k = 5  # (Lookahead) 5 (default), 10.
 lookahead_alpha = 0.5  # (Lookahead) 0.5 (default), 0.8.
-loss_function_name = 'custom'  # [None, 'bce' (num_classes = 1), 'cross_entropy' (num_classes = 2), 'cross_entropy',
+loss_function_name = 'cross_entropy'  # [None, 'bce' (num_classes = 1), 'cross_entropy' (num_classes = 2), 'cross_entropy',
 # 'dice', 'f1', 'ranking', 'soft_auc', 'custom']. Note: if 'bce', then also change label_weights to list of 1 element.
 # Note: model output should be logits, i.e. NO sigmoid() (BCE) nor softmax() (CE) applied.
 loss_weights = [1, 0, 1, 1, 0, 0]  # [1/6, 1/6, 1/6, 1/6, 1/6, 1/6].
@@ -250,7 +250,7 @@ manual_lr = [1e-3, 1e-5, 1e-6]  # (Manual_LR) LR per epoch, if epoch > len(manua
 
 # Training config
 nr_runs = 1
-max_epochs = 20
+max_epochs = 100
 batch_size = 8
 max_batch_size = 16
 eval_interval = 1
