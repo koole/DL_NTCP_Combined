@@ -47,8 +47,8 @@ exp_models_dir = os.path.join(exp_src_dir, 'models')
 exp_optimizers_dir = os.path.join(exp_src_dir, 'optimizers')
 exp_data_preproc_dir = os.path.join(exp_src_dir, 'data_preproc')
 exp_figures_dir = os.path.join(exp_dir, 'figures')
-filename_stratified_sampling_test_csv = 'stratified_sampling_test_manual_94.csv'  # input file
-filename_stratified_sampling_full_csv = 'stratified_sampling_full_manual_94.csv'  # output file
+filename_stratified_sampling_test_csv = 'stratified_sampling_test_manual_DAN.csv'  # input file
+filename_stratified_sampling_full_csv = 'stratified_sampling_full_manual_DAN.csv'  # output file
 filename_train_val_test_patient_ids_json = 'train_val_test_patient_ids.json'
 filename_results_csv = 'results.csv'
 filename_results_overview_csv = 'results_overview.csv'
@@ -165,7 +165,8 @@ model_name = 'dcnn_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'c
 n_input_channels = 3  # CT, RTDOSE and Segmentation_map
 features_dl = ['HN35_Xerostomia_W01_not_at_all', 'HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe',
                'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
-features_dl = ['HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe','Submandibular_meandose','Parotid_meandose_adj']
+features_dl = ['HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe','Submandibular_meandose','Parotid_meandose_adj',
+               'Sex', 'Age']
               # 'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
 
 resnet_shortcut = 'B'  # (resnet_original) 'A', 'B'. Pretrained resnet10_original has 'B', resnet18_original has 'A'.
