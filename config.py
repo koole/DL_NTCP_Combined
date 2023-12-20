@@ -152,10 +152,10 @@ ct_dose_seg_interpol_mode_2d = 'bilinear'
 perform_augmix = True
 mixture_width = 3  # 3 (default)
 mixture_depth = [1, 3]  # [1, 3] (default)
-augmix_strength = 1
+augmix_strength = 3
 
 # Deep Learning model config
-model_name = 'resnet_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'convnext_base',
+model_name = 'dcnn_lrelu'  # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'convnext_base',
 # 'dcnn_lrelu', 'dcnn_dws_lrelu', 'dcnn_lrelu_gn', 'dcnn_lrelu_ln', 'dcnn_selu', 'efficientnet-b0', 'efficientnet-b1',
 # ..., 'efficientnet-b8', 'efficientnetv2_xs', 'efficientnetv2_s', 'efficientnetv2_m', 'efficientnetv2_l',
 # 'efficientnetv2_xl', 'efficientnetv2_s_selu', 'efficientnetv2_m_selu', 'efficientnetv2_l_selu',
@@ -180,7 +180,7 @@ pooling_conv_filters = None  # Either int or None (i.e. no pooling conv before f
 perform_pooling = False  # Whether to perform (Avg)Pooling or not. If pooling_conv_filters is not None, then
 # (Avg)Pooling will not be applied.
 linear_units = [16]
-dropout_p = [0.25]  # Should have the same length as `linear_units`
+dropout_p = [0]  # Should have the same length as `linear_units`
 clinical_variables_position = 0  # (Only if len(features_dl) > 0.) -1 | 0 | 1 | 2 | ... The position is in line with
 # `clinical_variables_linear_units`, e.g., 0 means that the clinical variables MLP will be added to the first linear
 # layer of `clinical_variables_linear_units`. Note: -1 means that the clinical variables MLP will be added to the layer
@@ -217,7 +217,7 @@ loss_function_name = 'cross_entropy'  # [None, 'bce' (num_classes = 1), 'cross_e
 # Note: model output should be logits, i.e. NO sigmoid() (BCE) nor softmax() (CE) applied.
 loss_weights = [1, 0, 1, 1, 0, 0]  # [1/6, 1/6, 1/6, 1/6, 1/6, 1/6].
 # (loss_function_name='custom') list of weight for [ce, dice, f1, l1, ranking, soft_auc].
-label_weights = [1, 1.5]  # [1, 1] (ce) | [1] (bce) | w_jj = (1 - /beta) / (1 - /beta^{n_samples_j}) (\beta = 0.9, 0.99) |
+label_weights = [1, 1]  # [1, 1] (ce) | [1] (bce) | w_jj = (1 - /beta) / (1 - /beta^{n_samples_j}) (\beta = 0.9, 0.99) |
 # wj=n_samples / (n_classes * n_samplesj). Rescaling (relative) weight given to each class, has to be list of size C.
 loss_reduction = 'mean'
 label_smoothing = 0  # (LabelSmoothing) If 0, then no label smoothing will be applied. Currently only supported for
@@ -231,7 +231,7 @@ lr_finder_upper_lr = 1e-3  # (LearningRateFinder) Minimum learning rate value to
 lr_finder_num_iter = 0  # (LearningRateFinder) Number of learning rates to try within [lower_lr, upper_lr].
 warmup_batches = 0  # (LearningRateWarmUP) Number of warmup batches. If warmup = 0, then no warmup. Does not work with
 # manual schedulers (e.g. 'manual_lr', see misc.get_scheduler()).
-T_0 = 8  # (CosineAnnealingWarmRestarts) Number of epochs until a restart.
+T_0 = 40  # (CosineAnnealingWarmRestarts) Number of epochs until a restart.
 T_mult = 1  # (CosineAnnealingWarmRestarts) A factor increases after a restart. Default: 1.
 eta_min = 1e-8  # (CosineAnnealingWarmRestarts) Minimum learning rate. Default: 0.
 base_lr = 1e-7  # (CylicLR, only if perform_lr_finder = False, see get_scheduler()) Minimum and starting learning rate.
