@@ -222,6 +222,11 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
     logger.my_print('Number of training iterations per epoch: {}.'.format(train_num_iterations))
     epoch = 0
     best_epoch = 0
+    
+    
+    ### ADDED
+    #torch.autograd.set_detect_anomaly(True)
+    
     for epoch in range(max_epochs):
         # Print training stats
         logger.my_print(f'Epoch {epoch + 1}/{max_epochs}...')
@@ -245,6 +250,15 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
                 batch_data['features'].to(device),
                 batch_data['label'].to(device)
             )
+            
+            """
+            print("Input has NaNs: ", torch.isnan(train_inputs).any())
+            print("Features has NaNs: ", torch.isnan(train_features).any())
+            print("Labels has NaNs: ", torch.isnan(train_labels).any())
+            
+            print(train_features)
+            print(train_labels)
+            """
 
             if perform_augmix:
                 for b in range(len(train_inputs)):
@@ -263,6 +277,10 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
             # Zero the parameter gradients and make predictions
             optimizer.zero_grad(set_to_none=True)
             train_outputs = model(x=train_inputs, features=train_features)
+            
+            """
+            print(train_outputs)
+            """
 
             # Calculate loss
             try:
@@ -270,9 +288,17 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
                 train_loss = loss_function(train_outputs, train_labels)
             except:
                 # BCE
+                print("BCE")
                 train_loss = loss_function(train_outputs,
                                            torch.reshape(train_labels, train_outputs.shape).to(train_outputs.dtype))
 
+            ### PATCH ADDED  !!!!
+            print(f"loss is = {train_loss:.4f}")
+            #train_loss[torch.isnan(train_loss)] = 0
+            #print(f"loss is = {train_loss:.4f}")
+            
+            #print(f"loss_item is = {train_loss.item():.5f}")
+            
             if optimizer_name in ['ada_hessian']:
                 # https://github.com/pytorch/pytorch/issues/4661
                 # https://discuss.pytorch.org/t/how-to-backward-the-derivative/17662?u=bpetruzzo
@@ -600,6 +626,7 @@ if __name__ == '__main__':
     # Initialize W&B
     # run = wandb.init(project='DL_NTCP', reinit=True, mode=wandb_mode)
 
+    """
     model_name = 'resnet_lrelu'
     filters = [2, 3, 4, 5]
     # clinical_variables_linear_units = [10]
@@ -608,6 +635,7 @@ if __name__ == '__main__':
     #         for clinical_variables_linear_units in [None, [10]]:
     #             dropout_p = [0.2] * len(linear_units)
     loss_weights = np.random.random(6).tolist()
+    """
     print('loss_weights:', loss_weights)
 
     # Initialize data objects
