@@ -278,9 +278,6 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
             optimizer.zero_grad(set_to_none=True)
             train_outputs = model(x=train_inputs, features=train_features)
             
-            """
-            print(train_outputs)
-            """
 
             # Calculate loss
             try:
@@ -288,16 +285,9 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
                 train_loss = loss_function(train_outputs, train_labels)
             except:
                 # BCE
-                print("BCE")
                 train_loss = loss_function(train_outputs,
                                            torch.reshape(train_labels, train_outputs.shape).to(train_outputs.dtype))
 
-            ### PATCH ADDED  !!!!
-            print(f"loss is = {train_loss:.4f}")
-            #train_loss[torch.isnan(train_loss)] = 0
-            #print(f"loss is = {train_loss:.4f}")
-            
-            #print(f"loss_item is = {train_loss.item():.5f}")
             
             if optimizer_name in ['ada_hessian']:
                 # https://github.com/pytorch/pytorch/issues/4661

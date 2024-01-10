@@ -38,7 +38,7 @@ optimizers_dir = os.path.join(root_path, 'optimizers')
 data_preproc_dir = os.path.join(root_path, 'data_preproc')
 save_root_dir = os.path.join(root_path, 'datasets')
 data_dir = os.path.join(save_root_dir, 'dataset_new')
-exp_root_dir = os.path.join(root_path, 'experiments', 'test')
+exp_root_dir = os.path.join(root_path, 'experiments', 'binary_output')   # Change this one so that each experiment is put in its own folder!
 create_folder_if_not_exists(exp_root_dir)
 exp_name = datetime.now().strftime("%Y%m%d_%H%M%S")
 exp_dir = os.path.join(exp_root_dir, exp_name)
@@ -47,8 +47,8 @@ exp_models_dir = os.path.join(exp_src_dir, 'models')
 exp_optimizers_dir = os.path.join(exp_src_dir, 'optimizers')
 exp_data_preproc_dir = os.path.join(exp_src_dir, 'data_preproc')
 exp_figures_dir = os.path.join(exp_dir, 'figures')
-filename_stratified_sampling_test_csv = 'stratified_sampling_test_manual_DAN.csv'  # input file
-filename_stratified_sampling_full_csv = 'stratified_sampling_full_manual_DAN.csv'  # output file
+filename_stratified_sampling_test_csv = 'stratified_features_test_DAN.csv'  # input file
+filename_stratified_sampling_full_csv = 'stratified_features_full_DAN.csv'  # output file
 filename_train_val_test_patient_ids_json = 'train_val_test_patient_ids.json'
 filename_results_csv = 'results.csv'
 filename_results_overview_csv = 'results_overview.csv'
@@ -79,7 +79,7 @@ perform_stratified_sampling_full = False  # (Stratified Sampling). Whether or no
 strata_groups = ['HN35_Xerostomia_M12_class', 'CT+C_available', 'CT_Artefact', 'Photons', 'Loctum2_v2']  #, 'Year_treatment_2cat']  # (Stratified Sampling). Note: order does not matter.
 split_col = 'Split'  # (Stratified Sampling). Column of the stratified sampling outcome ('train', 'val', 'test').
 cv_strata_groups = strata_groups  # (TODO: implement) Stratified Cross-Validation groups
-cv_folds = 1  # (Cross-Validation) If cv_folds=1, then perform train-val-test-split.
+cv_folds = 10  # (Cross-Validation) If cv_folds=1, then perform train-val-test-split.
 cv_type = 'stratified'  # (Stratified CV, only if cv_folds > 1) None | 'stratified'. Stratification is performed on endpoint value.
 dataset_type = 'cache'  # 'standard' | 'cache' | 'persistent'. If None, then 'standard'.
 # Cache: caches data in RAM storage. Persistent: caches data in disk storage instead of RAM storage.
@@ -154,7 +154,7 @@ mixture_depth = [1, 3]  # [1, 3] (default)
 augmix_strength = 3
 
 # Deep Learning model config
-model_name = 'resnet_lrelu'   # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'convnext_base',
+model_name = 'dcnn_lrelu'   # ['cnn_lrelu', 'convnext_tiny', 'convnext_small', 'convnext_base',
 # 'dcnn_lrelu', 'dcnn_dws_lrelu', 'dcnn_lrelu_gn', 'dcnn_lrelu_ln', 'dcnn_selu', 'efficientnet-b0', 'efficientnet-b1',
 # ..., 'efficientnet-b8', 'efficientnetv2_xs', 'efficientnetv2_s', 'efficientnetv2_m', 'efficientnetv2_l',
 # 'efficientnetv2_xl', 'efficientnetv2_s_selu', 'efficientnetv2_m_selu', 'efficientnetv2_l_selu',
@@ -163,10 +163,7 @@ model_name = 'resnet_lrelu'   # ['cnn_lrelu', 'convnext_tiny', 'convnext_small',
 # 'resnet_dcnn_selu', 'resnet_mp_lrelu', 'resnet_original_relu', 'resnext_lrelu', 'resnext_original_relu'].
 n_input_channels = 3  # CT, RTDOSE and Segmentation_map
 features_dl = ['HN35_Xerostomia_W01_not_at_all', 'HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe',
-               'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
-features_dl = ['HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe',#'Submandibular_meandose','Parotid_meandose_adj',
-               'Sex', 'Age']
-              # 'Gender', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
+               'Sex', 'Age']  # [] | data_preproc_config.features  # Should contain columns in features.csv.
 
 resnet_shortcut = 'B'  # (resnet_original) 'A', 'B'. Pretrained resnet10_original has 'B', resnet18_original has 'A'.
 filters = [8, 8, 16, 16, 32]
@@ -188,7 +185,7 @@ clinical_variables_position = 0  # (Only if len(features_dl) > 0.) -1 | 0 | 1 | 
 clinical_variables_linear_units = None  # (Only if len(features_dl) > 0.) None | list of ints
 clinical_variables_dropout_p = [0]  # Should have the same length as `clinical_variables_linear_units`
 use_bias = True
-num_classes = 2  # Model outputs size. IMPORTANT: define `label_weights` such that len(label_weights) == num_classes.
+num_classes = 1  # Model outputs size. IMPORTANT: define `label_weights` such that len(label_weights) == num_classes.
 num_ohe_classes = 2  # Size of One-Hot Encoding output.
 
 # Optimization config
@@ -212,12 +209,12 @@ hessian_power = 1.0  # (AdaHessian)
 use_lookahead = False  # (Lookahead)
 lookahead_k = 5  # (Lookahead) 5 (default), 10.
 lookahead_alpha = 0.5  # (Lookahead) 0.5 (default), 0.8.
-loss_function_name = 'custom'  # [None, 'bce' (num_classes = 1), 'cross_entropy' (num_classes = 2), 'cross_entropy',
+loss_function_name = 'bce'  # [None, 'bce' (num_classes = 1), 'cross_entropy' (num_classes = 2), 'cross_entropy',
 # 'dice', 'f1', 'ranking', 'soft_auc', 'custom']. Note: if 'bce', then also change label_weights to list of 1 element.
 # Note: model output should be logits, i.e. NO sigmoid() (BCE) nor softmax() (CE) applied.
 loss_weights = [1, 0, 0,0 , 0, 0]  # [1/6, 1/6, 1/6, 1/6, 1/6, 1/6].
 # (loss_function_name='custom') list of weight for [ce, dice, f1, l1, ranking, soft_auc].
-label_weights = [1,1]  # [1, 1] (ce) | [1] (bce) | w_jj = (1 - /beta) / (1 - /beta^{n_samples_j}) (\beta = 0.9, 0.99) |
+label_weights = [1]  # [1, 1] (ce) | [1] (bce) | w_jj = (1 - /beta) / (1 - /beta^{n_samples_j}) (\beta = 0.9, 0.99) |
 # wj=n_samples / (n_classes * n_samplesj). Rescaling (relative) weight given to each class, has to be list of size C.
 loss_reduction = 'mean'
 label_smoothing = 0  # (LabelSmoothing) If 0, then no label smoothing will be applied. Currently only supported for
