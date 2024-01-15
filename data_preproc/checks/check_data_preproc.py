@@ -459,7 +459,9 @@ def main_plot():
             # expected list of unique values, i.e. [0, 1, ..., len(cfg.structures_uncompound_list)]. +1 is for background
             # Normally those lists should be identical, but patient_id = 3573430 has no crico, esophagus_cerv and
             # thyroid, neither in CITOR nor in DLC.
-            if not np.all(
+            if len(np.unique(segmentation_map_arr)) != len(cfg.structures_uncompound_list) + 1:
+                logger.my_print('lengths of np.unique(segmentation_map_arr) and cfg.structures_uncompound_list not consistent', level='warning')
+            elif not np.all(
                 np.unique(segmentation_map_arr) == [x for x in range(1 + len(cfg.structures_uncompound_list))]):
                 logger.my_print('np.unique(segmentation_map_arr): {}'.format(np.unique(segmentation_map_arr)),
                                 level='warning')

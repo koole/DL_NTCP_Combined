@@ -12,13 +12,14 @@ use_umcg = True
 # Paths
 # TODO: temporary, for MDACC
 if use_umcg:
-    data_dir = '//zkh/appdata/RTDicom/PRI2MA/{}'
+    data_dir = '//zkh/appdata/RTDicom/Projectline_HNC_modelling/PRI2MA/{}'
     data_collection_dir = '//zkh/appdata/RTDicom/HungChu/Data/PRI2MA'
-    data_dir_citor = '//zkh/appdata/RTDicom/PRI2MA/{}'  # Contains all 1453 CITOR RTSTRUCTs
-    save_dir_citor = 'D:/MyFirstData/raw_rtstructs_citor'  # Contains CITOR RTSTRUCTs for our patients in our cohort
-    data_dir_dlc = '//zkh/appdata/RTDicom/PRI2MA/DLC'  # Contains (valid) DLC RTSTRUCTs
-    save_root_dir = 'D:/MyFirstData'  # Contains saved files from scripts such as processed data, loggings, etc.
-    save_root_dir_2 = '//zkh/appdata/RTDicom/HungChu/Data/PRI2MA'  # Contains saved files for dataset
+    data_dir_citor = '//zkh/appdata/RTDicom/Projectline_HNC_modelling/PRI2MA/{}'  # Contains all 1453 CITOR RTSTRUCTs
+    save_dir_citor = 'H:/preprocess_multitox/raw_rtstructs_citor'  # Contains CITOR RTSTRUCTs for our patients in our cohort
+    
+    data_dir_dlc = '//zkh/appdata/RTDicom/Projectline_HNC_modelling/PRI2MA/DLC'  # Contains (valid) DLC RTSTRUCTs
+    save_root_dir = 'H:/preprocess_multitox'  # Contains saved files from scripts such as processed data, loggings, etc.
+    save_root_dir_2 = 'H:/HNC_Data'  # Contains saved files for dataset
     save_dir = os.path.join(save_root_dir_2, 'dicom_processed')
 else:
     data_dir = '//zkh/appdata/RTDicom/PRI2MA/MDACC/{}'
@@ -302,4 +303,4 @@ rtdose_colorbar_title = 'cGy'
 segmentation_colorbar_title = ''
 
 # Run whole data_preproc pipeline for a small number of patients, useful for testing
-test_patients_list = None  # ['0276627']
+test_patients_list = None # ['0084356', '0359912']  # None 
