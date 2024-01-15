@@ -148,7 +148,7 @@ filename_data_preproc_array_logging_txt = 'data_preproc_array_logging.txt'
 filename_data_preproc_features_logging_txt = 'data_preproc_features_logging.txt'
 filename_endpoints_csv = 'endpoints.csv'
 filename_patient_id_npy = '{patient_id}.npy'  # model's input (Numpy array), concatenation of: CT, RTDOSE and RTSTRUCT
-filename_features_csv = 'features.csv'
+filename_features_csv = 'stratified_features_full_DAN.csv'
 filename_stratified_sampling_csv = 'stratified_sampling.csv'
 # segmentation arrays
 filename_overview_structures_count_csv = 'overview_structures_count.csv'
@@ -170,9 +170,12 @@ baseline_col = 'HN35_Xerostomia_W01_class'
 submodels_features = [
     ['Submandibular_meandose', 'HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe'],
     ['Parotid_meandose_adj', 'HN35_Xerostomia_W01_little', 'HN35_Xerostomia_W01_moderate_to_severe'],
-]  # Features of submodels. Should be a list of lists. len(submodels_features) = nr_of_submodels. If None, then
+  ]
+
+
+  # Features of submodels. Should be a list of lists. len(submodels_features) = nr_of_submodels. If None, then
 # no fitting of submodels.
-features = ['Submandibular_meandose', 'Parotid_meandose_adj', 'HN35_Xerostomia_W01_little',
+features = ['Submandibular_meandose', 'Parotid_meandose_adj','HN35_Xerostomia_W01_little',
             'HN35_Xerostomia_W01_moderate_to_severe']  # Features of final model. Elements in submodels_features should
 # be a subset of `features`, i.e. submodels_features can have more distinct features than the final model.
 lr_coefficients = None  # [-2.9032, 0.0193, 0.1054, 0.5234, 1.2763]  # Values starting with coefficient for `intercept`,

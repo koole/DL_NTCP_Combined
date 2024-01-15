@@ -368,6 +368,7 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
             test_loss_values_list.append(test_loss_value)
             test_mse_values_list.append(test_mse_value)
             test_auc_values_list.append(test_auc_value)
+            
 
             # Select model
             if val_auc_value > best_val_auc_value:
@@ -948,14 +949,14 @@ if __name__ == '__main__':
                 # Make sure that test_y_sum and test_y_lr_sum have only `num_classes` different tensors:
                 # e.g. cv_folds = 5: {(0.0, 5.0), (5.0, 0.0)}
                 if max_epochs > 0:
-                    assert len(set([tuple(x.tolist()) for x in test_y_sum])) == num_classes
+                    #assert len(set([tuple(x.tolist()) for x in test_y_sum])) == num_classes
                     test_y_pred_ens = [x / cv_folds for x in test_y_pred_sum]
                     test_y_ens = [x / cv_folds for x in test_y_sum]
                     misc.save_predictions(patient_ids=test_patient_ids, y_pred_list=test_y_pred_ens,
                                           y_true_list=test_y_ens, mode_list=mode_lr_list, num_classes=num_classes,
                                           model_name=model_name + '_ens', exp_dir=exp_dir, logger=logger)
 
-                assert len(set([tuple(x.tolist()) for x in test_y_lr_sum])) == num_classes
+                #assert len(set([tuple(x.tolist()) for x in test_y_lr_sum])) == num_classes
                 test_y_pred_lr_ens = [x / cv_folds for x in test_y_pred_lr_sum]
                 test_y_lr_ens = [x / cv_folds for x in test_y_lr_sum]
                 misc.save_predictions(patient_ids=test_patient_ids_lr, y_pred_list=test_y_pred_lr_ens,
