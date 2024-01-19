@@ -4,6 +4,8 @@ cache/
 dataset/
 datasets/
 documents/
+results/
+results*
 exp*
 experiments/
 experiments_original/
