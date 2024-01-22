@@ -364,11 +364,14 @@ def main_segmentation_map():
             # expected list of unique values, i.e. [0, 1, ..., len(cfg.structures_uncompound_list)]. +1 is for background
             # Normally those lists should be identical, but patient_id = 3573430 has no crico, esophagus_cerv and
             # thyroid, neither in CITOR nor in DLC.
+            
+            ### DANIEL: Removed assertion, replaced with writing into a csv file which patients had inconsistent numbers of structures
+                ## use the datframe `df` to write in the patient IDs, and then save that at the end of this functions
             if len(np.unique(output_segmentation_map)) != len(cfg.structures_uncompound_list) + 1:
                 logger.my_print('lengths of np.unique(output_segmentation_map) and cfg.structures_uncompound_list not consistent', level='warning')
                 #df[df_idx] = {"ID": str(patient_id), "seg_count": len(cfg.structures_uncompound_list)+1}
                 #df_idx +=1
-                df.loc[len(df)] = {"ID": str(patient_id), "seg_count": len(cfg.structures_uncompound_list)+1}
+                df.loc[len(df)] = {"ID": str(patient_id), "seg_count": len(cfg.output_segmentation_map)}
                 #df = pd.concat([df, pd.DataFrame()], ignore_index=True)
             elif not np.all(
                 np.unique(output_segmentation_map) == [x for x in range(1 + len(cfg.structures_uncompound_list))]):

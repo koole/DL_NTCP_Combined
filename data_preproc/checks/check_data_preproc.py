@@ -520,7 +520,7 @@ def main_plot():
 
 
 def main():
-    # main_segmentation_outside_ct()
+    main_segmentation_outside_ct()
     main_plot()
 
 

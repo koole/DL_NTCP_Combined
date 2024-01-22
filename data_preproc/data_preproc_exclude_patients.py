@@ -61,43 +61,52 @@ def main():
 
         # Check which patients have invalid dose values (check_data_preproc_ct_rtdose.py)
         rtdose = pd.read_csv(os.path.join(save_root_dir, cfg.filename_overview_rtdose_csv), sep=';', index_col=0)
+        print(rtdose.index)
         # Check which patients have too large segmentation fraction outside CT (check_data_preproc.py)
         df_fraction_outside = pd.read_csv(os.path.join(save_root_dir, cfg.filename_segmentation_fraction_outside_ct_csv),
-                                          sep=';', index_col=0)
+                                          sep=';', index_col=0, dtype={0:object})
+        print(df_fraction_outside.index)
 
         logger.my_print('RTDOSE in [{}, {}] allowed'.format(rtdose_lower_limit, rtdose_upper_limit))
         logger.my_print('Maximum segmentation fraction outside CT allowed: {}'.format(max_outside_fraction))
 
         # List of patients
-        df_endpoints = pd.read_csv(os.path.join(save_root_dir, cfg.filename_endpoints_csv), sep=';')
-        patients_list = df_endpoints[cfg.patient_id_col]
+        patients_list = next(os.walk(cfg.save_dir))[1]
+        # df_endpoints = pd.read_csv(os.path.join(save_root_dir, cfg.filename_endpoints_csv), sep=';')
+        # patients_list = df_endpoints[cfg.patient_id_col]
 
         df = pd.DataFrame(columns=['Patient_id'])
         for patient_id in patients_list:
             # Determine folder type of interest ('with_contrast'/'no_contrast')
             # TODO: temporary, for MDACC
+            """
             if use_umcg:
                 folder_type_i = df_data_folder_types.loc[patient_id]['Folder']
             else:
                 folder_type_i = ''
+            """
 
             invalid_dict_i = dict()
 
             # Too low or too large max RTDOSE value
             try:
-                rtdose_i = rtdose.loc[[patient_id]]
+                rtdose_i = rtdose.loc[[int(patient_id)]]     # DANIEL: made patient_id an int(), so that it actually indexes the dataframe properly (dataframe index isn't a string padded with zeros)s
                 if not (rtdose_lower_limit < rtdose_i['max'].values < rtdose_upper_limit):
                     invalid_dict_i['Patient_id'] = patient_id
-                    invalid_dict_i['Max RTDOSE'] = rtdose_i['max']
+                    invalid_dict_i['Max RTDOSE'] = rtdose_i['max'].values  # DANIEL: added ".values"
+                    print(patient_id, "rtdose_i")
             except:
                 pass
 
             # Segmentation fraction outside CT
-            fraction_outside_i = df_fraction_outside.loc[[patient_id]]
+            fraction_outside_i = df_fraction_outside.loc[[int(patient_id)]]   # DANIEL: made patient_id an int(), so that it actually indexes the dataframe properly (dataframe index isn't a string padded with zeros)
             for structure in cfg.parotis_structures + cfg.submand_structures:
                 if fraction_outside_i[structure].values > max_outside_fraction:
                     invalid_dict_i['Patient_id'] = patient_id
-                    invalid_dict_i['Fraction {} outside CT'.format(structure)] = fraction_outside_i[structure]
+                    print(patient_id, "fraction outside")
+                    invalid_dict_i['Fraction {} outside CT'.format(structure)] = fraction_outside_i[structure].values   # DANIEL: added ".values"
+                    print(" HELLO")
+                    print(fraction_outside_i[structure].values)   
 
             # Add patients to be excluded and the reason
             if len(invalid_dict_i) > 0:

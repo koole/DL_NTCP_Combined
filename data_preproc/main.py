@@ -74,13 +74,14 @@ if __name__ == '__main__':
     logger.my_print('Running data_preproc...')
     data_preproc.main()
 
+    
     logger.my_print('Running check_data_preproc...')
     check_data_preproc.main()
     #
-    #logger.my_print('Running data_preproc_exclude_patients...')
+    logger.my_print('Running data_preproc_exclude_patients...')
     # # Note: if len(test_patients_list) > 0, but we need exclude_patients.csv for all patients, then Search for:
     # # `# TODO: temporary: consider all patients, for exclude_patients.csv`, and uncomment/enable the code lines.
-    #data_preproc_exclude_patients.main()
+    data_preproc_exclude_patients.main()
 
     end = time.time()
     logger.my_print('Elapsed time: {time} seconds'.format(time=round(end - start, 3)))
