@@ -257,9 +257,6 @@ def main_segmentation_map():
             test_patients_list = cfg.test_patients_list
             patients_list = [x for x in test_patients_list if x in patients_list]
 
-
-        df = pd.DataFrame(columns=["ID", "seg_count"])
-        df_idx = 0
         for patient_id in tqdm(patients_list):
             logger.my_print('Patient_id: {}'.format(patient_id))
 
@@ -360,27 +357,6 @@ def main_segmentation_map():
                                 .format(output_segmentation_map.dtype))
                 json_file.close()
 
-            # Make sure that the list of unique values in output_segmentation_map is less than or identical to the \
-            # expected list of unique values, i.e. [0, 1, ..., len(cfg.structures_uncompound_list)]. +1 is for background
-            # Normally those lists should be identical, but patient_id = 3573430 has no crico, esophagus_cerv and
-            # thyroid, neither in CITOR nor in DLC.
-            
-            ### DANIEL: Removed assertion, replaced with writing into a csv file which patients had inconsistent numbers of structures
-                ## use the datframe `df` to write in the patient IDs, and then save that at the end of this functions
-            if len(np.unique(output_segmentation_map)) != len(cfg.structures_uncompound_list) + 1:
-                logger.my_print('lengths of np.unique(output_segmentation_map) and cfg.structures_uncompound_list not consistent', level='warning')
-                #df[df_idx] = {"ID": str(patient_id), "seg_count": len(cfg.structures_uncompound_list)+1}
-                #df_idx +=1
-                df.loc[len(df)] = {"ID": str(patient_id), "seg_count": len(cfg.output_segmentation_map)}
-                #df = pd.concat([df, pd.DataFrame()], ignore_index=True)
-            elif not np.all(
-                np.unique(output_segmentation_map) == [x for x in range(1 + len(cfg.structures_uncompound_list))]):
-                logger.my_print('np.unique(output_segmentation_map): {}'.format(np.unique(output_segmentation_map)),
-                                level='warning')
-                logger.my_print('[x for x in range(1 + len(cfg.structures_uncompound_list))]: {}'.format(
-                    [x for x in range(1 + len(cfg.structures_uncompound_list))]), level='warning')
-            
-
             # Save results
             save_path = os.path.join(save_dir_segmentation_map, patient_id)
             create_folder_if_not_exists(save_path)
@@ -389,11 +365,11 @@ def main_segmentation_map():
             logger.my_print('output_segmentation_map.shape: {}'.format(output_segmentation_map.shape))
             np.save(file=os.path.join(save_path, cfg.filename_segmentation_map_npy), arr=output_segmentation_map)
 
-
-    df.to_csv(os.path.join(save_root_dir, "segmentation_unique_counts.csv"), sep=';')
     end = time.time()
     logger.my_print('Elapsed time: {time} seconds'.format(time=round(end - start, 3)))
     logger.my_print('DONE!')
+
+
 
 
 def main_cropping_regions():

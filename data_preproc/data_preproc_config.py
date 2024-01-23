@@ -153,6 +153,7 @@ filename_features_csv = 'stratified_features_full_DAN.csv'
 filename_stratified_sampling_csv = 'stratified_sampling.csv'
 # segmentation arrays
 filename_overview_structures_count_csv = 'overview_structures_count.csv'
+filename_patients_incorrect_structure_count_csv = 'patients_incorrect_number_of_structures.csv'
 # check_data_preproc.py
 filename_check_data_preproc_logging_txt = 'check_data_preproc_logging.txt'
 # data_preproc_exclude_patient.py

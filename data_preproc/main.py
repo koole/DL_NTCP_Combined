@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     
 
-    
+    """
     # Run the separate modules
     logger.my_print('Running data_folder_types...')
     data_folder_types.main()
@@ -77,6 +77,7 @@ if __name__ == '__main__':
     
     logger.my_print('Running check_data_preproc...')
     check_data_preproc.main()
+    """
     #
     logger.my_print('Running data_preproc_exclude_patients...')
     # # Note: if len(test_patients_list) > 0, but we need exclude_patients.csv for all patients, then Search for:
