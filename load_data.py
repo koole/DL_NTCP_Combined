@@ -1,5 +1,5 @@
 """
-Note: exclude patients in exclude_patients.csv
+Load data
 """
 import os
 import json
@@ -82,25 +82,28 @@ def perform_stratified_sampling(df, frac, strata_groups, split_col, output_path_
     df_split.to_csv(output_path_filename, sep=';', index=False)
 
 
-def get_files(sampling_type, features, filename_stratified_sampling_test_csv, filename_stratified_sampling_full_csv,
-              perform_stratified_sampling_full, seed, logger):
+def get_files(sampling_type, endpoint_list, features, filename_stratified_sampling_test_csv,
+              filename_stratified_sampling_full_csv, perform_stratified_sampling_full, seed, logger):
     """
     Fetch data files and return the training, internal validation and test files. The data directory should be
     organized as follows:
     - data_dir:
-        - 0
-            - foo.npy
-            - foofoo1.npy
-                ...
-            - foofoofoofooN.npy
-        - 1
-            - bar.npy
-            - barbar1.npy
-                ...
-            - barbarbarbarN.npy
+        stratified_sampling_test.csv  # with column 'Split' containing values 'train_val' (cross-validation) and 'test'
+        - patients_data_dir:
+            - 0
+                - foo.npy
+                - foofoo1.npy
+                    ...
+                - foofoofoofooN.npy
+            - 1
+                - bar.npy
+                - barbar1.npy
+                    ...
+                - barbarbarbarN.npy
 
     Args:
         sampling_type:
+        endpoint_list:
         features:
         filename_stratified_sampling_test_csv:
         filename_stratified_sampling_full_csv:
@@ -112,41 +115,24 @@ def get_files(sampling_type, features, filename_stratified_sampling_test_csv, fi
         Training, internal validation and test files.
     """
     # Initialize variables
-    filename_exclude_patients_csv = data_preproc_config.filename_exclude_patients_csv
+    # filename_exclude_patients_csv = data_preproc_config.filename_exclude_patients_csv
     # filename_features_csv = data_preproc_config.filename_features_csv
     patient_id_length = data_preproc_config.patient_id_length
     patient_id_col = data_preproc_config.patient_id_col
     data_dir = config.data_dir
+    patients_data_dir = config.patients_data_dir
     perform_test_run = config.perform_test_run
     train_frac = config.train_frac
     val_frac = config.val_frac
     strata_groups = config.strata_groups
     split_col = config.split_col
 
-    # Load list of patients to be excluded
-    # try:
-    df_exclude_patients = pd.read_csv(filename_exclude_patients_csv, sep=';', header=None, index_col=0)
-    # Remove nan's
-    df_exclude_patients = df_exclude_patients[~pd.isnull(df_exclude_patients.index.values)]
-    exclude_patients = df_exclude_patients.index.values.astype('int64')
-    # except:
-    #     exclude_patients = []
-    #     logger.my_print('Cannot open or read {}. Setting exclude_patients = {}.'.
-    #                     format(filename_exclude_patients_csv, exclude_patients), level='warning')
-
-    logger.my_print('Number of patients excluded: {}.'.format(len(exclude_patients)))
-    for p in exclude_patients:
-        logger.my_print('Patient_id = {} will be excluded.'.format('%0.{}d'.format(patient_id_length) % p))
-
     # Load features
-    df_features = pd.read_csv(os.path.join(data_dir, filename_stratified_sampling_test_csv), sep=';', decimal=',')
+    df_features = pd.read_csv(os.path.join(data_dir, filename_stratified_sampling_test_csv), sep=';', decimal='.')
     df_features[patient_id_col] = ['%0.{}d'.format(patient_id_length) % int(x) for x in df_features[patient_id_col]]
 
-    # Create list of images and labels
-    images_list, labels_list, features_list, patient_ids_list = list(), list(), list(), list()
-    labels_unique = [x for x in os.listdir(data_dir) if not x.endswith('.csv')]
-    # sort() to make sure that different platforms use the same order --> required for random.shuffle() later
-    labels_unique.sort()
+    # Create list of images and labels_raw_train
+    images_list, label_values_list, features_list, patient_ids_list = list(), list(), list(), list()
 
     # Get PatientIDs
     patient_ids_list = df_features[patient_id_col].values.tolist()
@@ -159,23 +145,20 @@ def get_files(sampling_type, features, filename_stratified_sampling_test_csv, fi
         features_list += [[float(str(x).replace(',', '.')) for x in y] for y in
                           df_features_i[features].values.tolist()]
         # Endpoint
-        labels_list.append(df_features_i[data_preproc_config.endpoint])
-    
-    labels_list = list(map(int, labels_list))
-    
+        label_values_list.append([int(df_features_i[x]) for x in endpoint_list])
 
-    assert len(patient_ids_list) == len(features_list) == len(labels_list)
+    assert len(patient_ids_list) == len(features_list) == len(label_values_list)
     # Note: '0' in front of string is okay: int('0123') will become 123
     data_dicts = [
-        {'ct': os.path.join(data_dir, str(label_name), patient_id, data_preproc_config.filename_ct_npy),
-         'rtdose': os.path.join(data_dir, str(label_name), patient_id, data_preproc_config.filename_rtdose_npy),
-         'segmentation_map': os.path.join(data_dir, str(label_name), patient_id,
+        {'ct': os.path.join(patients_data_dir, patient_id, data_preproc_config.filename_ct_npy),
+         'rtdose': os.path.join(patients_data_dir, patient_id, data_preproc_config.filename_rtdose_npy),
+         'segmentation_map': os.path.join(patients_data_dir, patient_id,
                                           data_preproc_config.filename_segmentation_map_npy),
-         'features': feature_name,
-         'label': label_name,
+         'features': feature_values,
+         'label_list': label_values,
          'patient_id': patient_id}
-        for patient_id, feature_name, label_name in zip(patient_ids_list, features_list, labels_list)
-        if int(patient_id) not in exclude_patients
+        for patient_id, feature_values, label_values in zip(patient_ids_list, features_list, label_values_list)
+        # if int(patient_id) not in exclude_patients
     ]
 
     # Whether to perform random split or to perform stratified sampling
@@ -209,17 +192,7 @@ def get_files(sampling_type, features, filename_stratified_sampling_test_csv, fi
         df_split[patient_id_col] = ['%0.{}d'.format(patient_id_length) % int(x) for x in df_split[patient_id_col]]
 
         # Exclude patients
-        df_split = df_split[~df_split[patient_id_col].astype(np.int64).isin(exclude_patients)]
-
-        # Make sure that files in the dataset folders comprehend with the label in filename_stratified_sampling_test_csv
-        for l in labels_unique:
-            # patient_ids_l = [x.replace('.npy', '') for x in os.listdir(os.path.join(data_dir, l))]
-            patient_ids_l = os.listdir(os.path.join(data_dir, l))
-            patient_ids_l = [x for x in patient_ids_l if
-                             int(x) not in exclude_patients and x in df_split[patient_id_col].tolist()]
-            for p in patient_ids_l:
-                df_i = df_split[df_split[patient_id_col] == p]
-                assert int(df_i[data_preproc_config.endpoint].values[0]) == int(l)
+        # df_split = df_split[~df_split[patient_id_col].astype(np.int64).isin(exclude_patients)]
 
         # Split
         total_size = len(df_split)
@@ -250,8 +223,9 @@ def get_files(sampling_type, features, filename_stratified_sampling_test_csv, fi
             else:
                 raise ValueError('Invalid split_i: {}.'.format(split_i))
 
-        assert len(df_features) == len(data_dicts) + len(exclude_patients) == len(df_split) + len(exclude_patients) == \
-               len(train_dict) + len(val_dict) + len(test_dict) + len(exclude_patients)
+        # assert len(df_features) == len(data_dicts) + len(exclude_patients) == len(df_split) + len(exclude_patients) == \
+        #        len(train_dict) + len(val_dict) + len(test_dict) + len(exclude_patients)
+        assert len(df_features) == len(data_dicts) == len(df_split) == len(train_dict) + len(val_dict) + len(test_dict)
 
         # Select random subset for testing
         if perform_test_run:
@@ -274,7 +248,7 @@ def get_files(sampling_type, features, filename_stratified_sampling_test_csv, fi
     return train_dict, val_dict, test_dict
 
 
-def get_files_stats(train_dict, val_dict, test_dict, features, logger):
+def get_files_stats(train_dict, val_dict, test_dict, endpoint_list, features, logger):
     nr_of_decimals = config.nr_of_decimals
 
     # logger.my_print('train_dict: {}.'.format(train_dict))
@@ -289,33 +263,43 @@ def get_files_stats(train_dict, val_dict, test_dict, features, logger):
 
     logger.my_print('Total number of data samples: {}.'.format(n_train + n_val + n_test))
 
-    # Print label distribution
-    n_train_0 = sum([True for x in train_dict if x['label'] == 0])
-    n_train_1 = sum([True for x in train_dict if x['label'] == 1])
-    n_val_0 = sum([True for x in val_dict if x['label'] == 0])
-    n_val_1 = sum([True for x in val_dict if x['label'] == 1])
-    n_test_0 = sum([True for x in test_dict if x['label'] == 0])
-    n_test_1 = sum([True for x in test_dict if x['label'] == 1])
+    # Print endpoint distribution
+    n_train_0_list, n_train_1_list, n_val_0_list, n_val_1_list, n_test_0_list, n_test_1_list = (list(), list(), list(),
+                                                                                                list(), list(), list())
 
-    if n_train > 0:
-        logger.my_print('Training size (label=0): {}/{} ({}).'.format(n_train_0, n_train,
-                                                                      round(n_train_0 / n_train, nr_of_decimals)))
-        logger.my_print('Training size (label=1): {}/{} ({}).'.format(n_train_1, n_train,
-                                                                      round(n_train_1 / n_train, nr_of_decimals)))
-    if n_val > 0:
-        logger.my_print('Internal validation size (label=0): {}/{} ({}).'.format(n_val_0, n_val,
-                                                                                 round(n_val_0 / n_val,
-                                                                                       nr_of_decimals)))
-        logger.my_print('Internal validation size (label=1): {}/{} ({}).'.format(n_val_1, n_val,
-                                                                                 round(n_val_1 / n_val,
-                                                                                       nr_of_decimals)))
-    if n_test > 0:
-        logger.my_print('Test size (label=0): {}/{} ({}).'.format(n_test_0, n_test,
-                                                                  round(n_test_0 / n_test, nr_of_decimals)))
-        logger.my_print('Test size (label=1): {}/{} ({}).'.format(n_test_1, n_test,
-                                                                  round(n_test_1 / n_test, nr_of_decimals)))
+    for i, endpoint in enumerate(endpoint_list):
+        n_train_0_list.append(sum([True for x in train_dict if x['label_list'][i] == 0]))
+        n_train_1_list.append(sum([True for x in train_dict if x['label_list'][i] == 1]))
+        n_val_0_list.append(sum([True for x in val_dict if x['label_list'][i] == 0]))
+        n_val_1_list.append(sum([True for x in val_dict if x['label_list'][i] == 1]))
+        n_test_0_list.append(sum([True for x in test_dict if x['label_list'][i] == 0]))
+        n_test_1_list.append(sum([True for x in test_dict if x['label_list'][i] == 1]))
 
-    return n_train_0, n_train_1, n_val_0, n_val_1, n_test_0, n_test_1, n_features
+        logger.my_print('Endpoint: {}'.format(endpoint))
+        if n_train > 0:
+            logger.my_print('\tTraining size (labels=0): {}/{} ({}).'.format(n_train_0_list[-1], n_train,
+                                                                           round(n_train_0_list[-1] / n_train,
+                                                                                 nr_of_decimals)))
+            logger.my_print('\tTraining size (labels=1): {}/{} ({}).'.format(n_train_1_list[-1], n_train,
+                                                                           round(n_train_1_list[-1] / n_train,
+                                                                                 nr_of_decimals)))
+        if n_val > 0:
+            logger.my_print('\tInternal validation size (labels=0): {}/{} ({}).'.format(n_val_0_list[-1], n_val,
+                                                                                      round(n_val_0_list[-1] / n_val,
+                                                                                            nr_of_decimals)))
+            logger.my_print('\tInternal validation size (labels=1): {}/{} ({}).'.format(n_val_1_list[-1], n_val,
+                                                                                      round(n_val_1_list[-1] / n_val,
+                                                                                            nr_of_decimals)))
+        if n_test > 0:
+            logger.my_print('\tTest size (labels=0): {}/{} ({}).'.format(n_test_0_list[-1], n_test,
+                                                                       round(n_test_0_list[-1] / n_test,
+                                                                             nr_of_decimals)))
+            logger.my_print('\tTest size (labels=1): {}/{} ({}).'.format(n_test_1_list[-1], n_test,
+                                                                       round(n_test_1_list[-1] / n_test,
+                                                                             nr_of_decimals)))
+        logger.my_print('')
+
+    return n_train_0_list, n_train_1_list, n_val_0_list, n_val_1_list, n_test_0_list, n_test_1_list, n_features
 
 
 def save_patient_ids(train_dict, val_dict, test_dict, filename):
@@ -518,7 +502,7 @@ def get_transforms(perform_data_aug, modes_3d, modes_2d, data_aug_p, data_aug_st
     # Define generic transforms
     generic_transforms = Compose([
         LoadImaged(keys=image_keys),
-        EnsureTyped(keys=image_keys + ['features', 'label'], data_type='tensor'),
+        EnsureTyped(keys=image_keys + ['features', 'label_list'], data_type='tensor'),
         # Clip
         ScaleIntensityRanged(keys=['ct'],
                              a_min=config.ct_a_min, a_max=config.ct_a_max,
@@ -692,10 +676,10 @@ def get_dataloaders(train_dict, val_dict, test_dict, train_transforms, val_trans
         logger.my_print('Using WeightedRandomSampler.')
         shuffle = False
 
-        label_raw_train = np.array([x['label'] for x in train_dict])
+        labels_raw_train = np.array([x['label_list'] for x in train_dict])
         # len(weights) = num_classes
-        weights = 1 / np.array([np.count_nonzero(1 - label_raw_train), np.count_nonzero(label_raw_train)])
-        samples_weight = np.array([weights[t] for t in label_raw_train])
+        weights = 1 / np.array([np.count_nonzero(1 - labels_raw_train), np.count_nonzero(labels_raw_train)])
+        samples_weight = np.array([weights[t] for t in labels_raw_train])
         samples_weight = torch.from_numpy(samples_weight)
         sampler = torch.utils.data.WeightedRandomSampler(samples_weight, len(samples_weight))
     else:
@@ -723,9 +707,9 @@ def get_dataloaders(train_dict, val_dict, test_dict, train_transforms, val_trans
     return train_dl, val_dl, test_dl, train_ds, dl_class, train_dl_args_dict
 
 
-def main(train_dict, val_dict, test_dict, features, perform_data_aug, data_aug_p, data_aug_strength, rand_cropping_size,
-         input_size, resize_mode, seg_orig_labels, seg_target_labels, batch_size, use_sampler, fold, drop_last,
-         sampling_type, filename_stratified_sampling_test_csv, filename_stratified_sampling_full_csv,
+def main(train_dict, val_dict, test_dict, endpoint_list, features, perform_data_aug, data_aug_p, data_aug_strength,
+         rand_cropping_size, input_size, resize_mode, seg_orig_labels, seg_target_labels, batch_size, use_sampler, fold,
+         drop_last, sampling_type, filename_stratified_sampling_test_csv, filename_stratified_sampling_full_csv,
          perform_stratified_sampling_full, seed, device, logger):
     """
     Loads datasets and returns the batches corresponding to the given parameters.
@@ -734,6 +718,7 @@ def main(train_dict, val_dict, test_dict, features, perform_data_aug, data_aug_p
         train_dict:
         val_dict:
         test_dict:
+        endpoint_list:
         features:
         perform_data_aug
         data_aug_p:
@@ -768,13 +753,13 @@ def main(train_dict, val_dict, test_dict, features, perform_data_aug, data_aug_p
     # Get training, internal validation and test files
     if nr_nones == 3:
         train_dict, val_dict, test_dict = get_files(
-            sampling_type=sampling_type, features=features,
+            sampling_type=sampling_type, endpoint_list=endpoint_list, features=features,
             filename_stratified_sampling_test_csv=filename_stratified_sampling_test_csv,
             filename_stratified_sampling_full_csv=filename_stratified_sampling_full_csv,
             perform_stratified_sampling_full=perform_stratified_sampling_full,
             seed=seed, logger=logger)
-    train_0, train_1, val_0, val_1, test_0, test_1, n_features = get_files_stats(train_dict, val_dict, test_dict,
-                                                                                 features, logger)
+    train_0_list, train_1_list, val_0_list, val_1_list, test_0_list, test_1_list, n_features = (
+        get_files_stats(train_dict, val_dict, test_dict, endpoint_list, features, logger))
 
     # Save list of patient_ids in training, internal validation and test
     save_patient_ids(train_dict, val_dict, test_dict,
@@ -805,11 +790,11 @@ def main(train_dict, val_dict, test_dict, features, perform_data_aug, data_aug_p
         batch_size=batch_size, use_sampler=use_sampler, drop_last=drop_last, logger=logger)
 
     # Get input shape
-    if train_0 + train_1 > 0:
+    if sum(train_0_list) + sum(train_1_list) > 0:
         example_data = next(iter(train_dl))
-    elif val_0 + val_1 > 0:
+    elif sum(val_0_list) + sum(val_1_list) > 0:
         example_data = next(iter(val_dl))
-    elif test_0 + test_1 > 0:
+    elif sum(test_0_list) + sum(test_1_list) > 0:
         example_data = next(iter(test_dl))
     # example_input = example_data['image']
     # example_input = torch.concat([example_data['ct'], example_data['rtdose'], example_data['segmentation_map']], axis=1)
@@ -817,5 +802,5 @@ def main(train_dict, val_dict, test_dict, features, perform_data_aug, data_aug_p
     batch_size, channels, depth, height, width = example_input.shape
 
     return (train_dl, val_dl, test_dl, train_ds, dl_class, train_dl_args_dict, batch_size, channels, depth, height,
-            width, train_0, train_1, val_0, val_1, test_0, test_1, n_features, train_dict, val_dict, test_dict,
-            norm_mean, norm_std)
+            width, train_0_list, train_1_list, val_0_list, val_1_list, test_0_list, test_1_list, n_features,
+            train_dict, val_dict, test_dict, norm_mean, norm_std)
