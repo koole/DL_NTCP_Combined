@@ -61,9 +61,11 @@ def main():
 
         # Check which patients have invalid dose values (check_data_preproc_ct_rtdose.py)
         rtdose = pd.read_csv(os.path.join(save_root_dir, cfg.filename_overview_rtdose_csv), sep=';', index_col=0)
+        print(rtdose.index)
         # Check which patients have too large segmentation fraction outside CT (check_data_preproc.py)
         df_fraction_outside = pd.read_csv(os.path.join(save_root_dir, cfg.filename_segmentation_fraction_outside_ct_csv),
                                           sep=';', index_col=0, dtype={0:object})
+        print(df_fraction_outside.index)
 
         logger.my_print('RTDOSE in [{}, {}] allowed'.format(rtdose_lower_limit, rtdose_upper_limit))
         logger.my_print('Maximum segmentation fraction outside CT allowed: {}'.format(max_outside_fraction))
@@ -92,6 +94,7 @@ def main():
                 if not (rtdose_lower_limit < rtdose_i['max'].values < rtdose_upper_limit):
                     invalid_dict_i['Patient_id'] = patient_id
                     invalid_dict_i['Max RTDOSE'] = rtdose_i['max'].values  # DANIEL: added ".values"
+                    print(patient_id, "rtdose_i")
             except:
                 pass
 
@@ -100,7 +103,10 @@ def main():
             for structure in cfg.parotis_structures + cfg.submand_structures:
                 if fraction_outside_i[structure].values > max_outside_fraction:
                     invalid_dict_i['Patient_id'] = patient_id
-                    invalid_dict_i['Fraction {} outside CT'.format(structure)] = fraction_outside_i[structure].values   # DANIEL: added ".values" 
+                    print(patient_id, "fraction outside")
+                    invalid_dict_i['Fraction {} outside CT'.format(structure)] = fraction_outside_i[structure].values   # DANIEL: added ".values"
+                    print(" HELLO")
+                    print(fraction_outside_i[structure].values)   
 
             # Add patients to be excluded and the reason
             if len(invalid_dict_i) > 0:
@@ -119,37 +125,13 @@ def main():
         logger.my_print('Number of patients to be excluded: {}'.format(len(df)))
         df = df.sort_index(axis=1)
         df.to_csv(os.path.join(save_root_dir, cfg.filename_exclude_patients_csv), sep=';')
-    print("Hello")
-    find_all_patients_with_missing_structures()
 
     end = time.time()
     logger.my_print('Elapsed time: {time} seconds'.format(time=round(end - start, 3)))
     logger.my_print('DONE!')
 
 
-def find_all_patients_with_missing_structures():
-    """
-    Reads the cfg.filename_overview_structures_count_csv file, which contains the pixel counts for each patient's 16 structures
-    Saves a new file that just shows the patients that are missing (at least 1) structure, and which structure(s) are missing
-    """
-    path_to_structure_count_csv = os.path.join(cfg.save_root_dir, cfg.filename_overview_structures_count_csv)
-    df = pd.read_csv(path_to_structure_count_csv, delimiter=';', index_col=0)
-    # Set non-zero values to None
-    df[df != 0] = None
-
-    # Remove rows where all values are None (i.e. keep only patients that have a struct=0)
-    df = df.dropna(axis=0, how='all')
-    df[df == 0] = 1
-
-    # save the csv
-    save_path = os.path.join(cfg.save_root_dir, cfg.filename_patients_incorrect_structure_count_csv)
-    df.to_csv(save_path, sep=';')
-
-
-
 if __name__ == '__main__':
     main()
-    print("hi")
-    
 
 
