@@ -264,10 +264,6 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
             optimizer.zero_grad(set_to_none=True)
             train_outputs = model(x=train_inputs, features=train_features)
             
-            """
-            print(train_outputs)
-            """
-
             # Calculate loss
             try:
                 # Cross-Entropy, Ranking, Custom
@@ -276,13 +272,6 @@ def train(model, train_dataloader, val_dataloader, test_dataloader, mean, std, o
                 # BCE
                 train_loss = loss_function(train_outputs,
                                            torch.reshape(train_labels, train_outputs.shape).to(train_outputs.dtype))
-
-            ### PATCH ADDED  !!!!
-            print(f"loss is = {train_loss:.4f}")
-            #train_loss[torch.isnan(train_loss)] = 0
-            #print(f"loss is = {train_loss:.4f}")
-            
-            #print(f"loss_item is = {train_loss.item():.5f}")
             
             if optimizer_name in ['ada_hessian']:
                 # https://github.com/pytorch/pytorch/issues/4661
@@ -608,19 +597,6 @@ if __name__ == '__main__':
     random.seed(a=seed)
     np.random.seed(seed=seed)
     torch.backends.cudnn.benchmark = cudnn_benchmark
-
-    # Initialize W&B
-    # run = wandb.init(project='DL_NTCP', reinit=True, mode=wandb_mode)
-
-    model_name = 'resnet_lrelu'
-    filters = [2, 3, 4, 5]
-    # clinical_variables_linear_units = [10]
-    # for clinical_variables_position in [-1, 0, 1]:
-    #     for linear_units in [[], [2], [2, 2]]:
-    #         for clinical_variables_linear_units in [None, [10]]:
-    #             dropout_p = [0.2] * len(linear_units)
-    loss_weights = np.random.random(6).tolist()
-    print('loss_weights:', loss_weights)
 
     # Initialize data objects
     train_auc_list, train_auc_lr_list = list(), list()

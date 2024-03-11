@@ -29,7 +29,7 @@ import data_preproc.data_preproc_config as data_preproc_config
 from data_preproc.data_preproc_functions import create_folder_if_not_exists
 
 # Whether to perform quick run for checking workability of code or not
-perform_test_run = False
+perform_test_run = True
 
 # Set directory contexts
 root_path = os.getcwd()
@@ -75,7 +75,7 @@ cudnn_benchmark = False  # True if gpu_condition else False  # `True` will be fa
 train_frac = 0.7  # training-internal_validation-test split. The same test set will be used for Cross-Validation.
 val_frac = 0.15  # training-internal_validation-test split. The same test set will be used for Cross-Validation.
 sampling_type = 'stratified'  # ['random', 'stratified']. Method for dataset splitting.
-perform_stratified_sampling_full = False  # (Stratified Sampling). Whether or not to recreate stratified_sampling_full.csv.
+perform_stratified_sampling_full = True  # (Stratified Sampling). Whether or not to recreate stratified_sampling_full.csv.
 # Note: if stratified_sampling_full.csv does not exist, then we will perform stratified sampling to create the file.
 strata_groups = ['HN35_Xerostomia_M12_class', 'CT+C_available', 'CT_Artefact', 'Photons', 'Loctum2_v2']  #, 'Year_treatment_2cat']  # (Stratified Sampling). Note: order does not matter.
 split_col = 'Split'  # (Stratified Sampling). Column of the stratified sampling outcome ('train', 'val', 'test').
@@ -262,7 +262,7 @@ figsize = (12, 12)
 
 if perform_test_run:
     lr_finder_num_iter = 0
-    n_samples = 20
+    n_samples = 50
     nr_runs = 1
     max_epochs = 2
     train_frac = 0.33
