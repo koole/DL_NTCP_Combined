@@ -1037,7 +1037,8 @@ if __name__ == '__main__':
             dst_folder_name += '_ens_{}'.format(test_auc_mean)
             dst_folder_name += '_lr_{}'.format(test_auc_lr_mean)
 
-        shutil.move(src_folder_name, dst_folder_name)
+        os.rename(src_folder_name, dst_folder_name)
+        #shutil.move(src_folder_name, dst_folder_name)
 
         # W&B
         # run.name = dst_folder_name.replace(os.path.join(config.exp_root_dir), '')[1:]

@@ -14,7 +14,7 @@ from torch.nn.functional import one_hot
 import config
 from lr_finder import LearningRateFinder
 from models.cnn_lrelu import CNN_LReLU
-from models.convnext_original import ConvNeXt
+# from models.convnext_original import ConvNeXt
 from models.dcnn_lrelu import DCNN_LReLU
 from models.dcnn_dws_lrelu import DCNN_DWS_LReLU
 from models.dcnn_lrelu_ln import DCNN_LReLU_LN
@@ -331,16 +331,16 @@ def get_model(model_name, num_ohe_classes, channels, depth, height, width, n_fea
                           pad_value=pad_value, n_down_blocks=n_down_blocks, lrelu_alpha=lrelu_alpha,
                           dropout_p=dropout_p, pooling_conv_filters=pooling_conv_filters,
                           perform_pooling=perform_pooling, linear_units=linear_units, use_bias=use_bias)
-    elif model_name == 'convnext_tiny':
-        # https://github.com/facebookresearch/ConvNeXt/blob/main/models/convnext.py
-        model = ConvNeXt(in_chans=channels, n_features=n_features, num_classes=num_classes, depths=[3, 3, 9, 3],
-                         dims=[96, 192, 384, 768])
-    elif model_name == 'convnext_small':
-        model = ConvNeXt(in_chans=channels, n_features=n_features, num_classes=num_classes, depths=[3, 3, 27, 3],
-                         dims=[96, 192, 384, 768])
-    elif model_name == 'convnext_base':
-        model = ConvNeXt(in_chans=channels, n_features=n_features, num_classes=num_classes, depths=[3, 3, 27, 3],
-                         dims=[128, 256, 512, 1024])
+    # elif model_name == 'convnext_tiny':
+    #     # https://github.com/facebookresearch/ConvNeXt/blob/main/models/convnext.py
+    #     model = ConvNeXt(in_chans=channels, n_features=n_features, num_classes=num_classes, depths=[3, 3, 9, 3],
+    #                      dims=[96, 192, 384, 768])
+    # elif model_name == 'convnext_small':
+    #     model = ConvNeXt(in_chans=channels, n_features=n_features, num_classes=num_classes, depths=[3, 3, 27, 3],
+    #                      dims=[96, 192, 384, 768])
+    # elif model_name == 'convnext_base':
+    #     model = ConvNeXt(in_chans=channels, n_features=n_features, num_classes=num_classes, depths=[3, 3, 27, 3],
+    #                      dims=[128, 256, 512, 1024])
     elif model_name == 'dcnn_lrelu':
         model = DCNN_LReLU(n_input_channels=channels, depth=depth, height=height, width=width, n_features=n_features,
                            num_classes=num_classes, filters=filters, kernel_sizes=kernel_sizes, strides=strides,
