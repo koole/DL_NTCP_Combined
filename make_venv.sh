@@ -19,14 +19,13 @@ module load Python/3.11.3-GCCcore-12.3.0              # import Python
 #module load PyTorch/1.12.1-foss-2022a-CUDA-11.7.0 
 python3 -m venv /scratch/$USER/.envs/HNC_env             # make a .venv with all the dependencies needed
 source /scratch/$USER/.envs/HNC_env/bin/activate
-pip install torch torchvision torchaudio
-pip install torchinfo tqdm monai pytz SimpleITK pydicom scikit-image matplotlib numpy 
-pip install torch_optimizer
-pip install scikit-learn opencv-python
-pip install timm
+pip3 install torch torchvision torchaudio
+pip3 install torchinfo tqdm monai pytz SimpleITK pydicom scikit-image matplotlib numpy 
+pip3 install torch_optimizer
+pip3 install scikit-learn opencv-python
+pip3 install timm
 pip install --upgrade pip
-pip install pandas
-pip install numpy --upgrade
+pip3 install pandas
 
 
 
