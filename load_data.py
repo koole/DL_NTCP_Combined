@@ -560,6 +560,9 @@ def get_transforms(perform_data_aug, modes_3d, modes_2d, data_aug_p, data_aug_st
             # the rotation is done in 2 dimensions, so that every slice is rotated by the same amount.
             # Rand3DElasticd(keys=[concat_key], prob=data_aug_p, sigma_range=(5, 8), magnitude_range=(0, round(1 * data_aug_strength)),
             #                padding_mode='border', mode=modes_3d),  # 3D: (nchannels, H, W, D)
+            RandShiftIntensityd(keys=[concat_key], prob=data_aug_p,
+                                 offsets=(0, 0.05 * data_aug_strength)
+                                 )
             # RandShiftIntensityd(keys=[concat_key], prob=data_aug_p,
             #                     offsets=((0, 0.05 * (config.ct_a_max - config.ct_a_min) * data_aug_strength),
             #                              (0, 0.05 * (config.rtdose_a_max - config.rtdose_a_min) * data_aug_strength),
@@ -649,13 +652,20 @@ def get_dataloaders(train_dict, val_dict, test_dict, train_transforms, val_trans
         ds_class = Dataset
     elif dataset_type == 'cache':
         ds_class = CacheDataset
-        update_dict = {'cache_rate': cache_rate, 'num_workers': num_workers}
+        update_dict = {'cache_rate': cache_rate, 'num_workers': num_workers, 'runtime_cache': config.runtime_cache}
     elif dataset_type == 'persistent':
         ds_class = PersistentDataset
         update_dict = {'cache_dir': cache_dir}
         create_folder_if_not_exists(cache_dir)
     else:
         raise ValueError('Invalid dataset_type: {}.'.format(dataset_type))
+    
+    from multiprocessing import Manager
+    manager = Manager()
+    train_dict = manager.list(train_dict)
+    val_dict = manager.list(val_dict)
+    if test_dict is not None:
+        test_dict = manager.list(test_dict)
 
     # Define Dataset function arguments
     train_ds_args_dict = {'data': train_dict, 'transform': train_transforms}
@@ -706,11 +716,14 @@ def get_dataloaders(train_dict, val_dict, test_dict, train_transforms, val_trans
     logger.my_print('\tNum_workers: {}.'.format(num_workers))
     logger.my_print('\tDrop_last: {}.'.format(drop_last))
     train_dl_args_dict = {'dataset': train_ds, 'batch_size': batch_size, 'shuffle': shuffle, 'sampler': sampler,
-                          'num_workers': num_workers, 'drop_last': drop_last}
+                          'num_workers': num_workers, 'drop_last': drop_last, 'persistent_workers':config.persistent_workers,
+                          'pin_memory': config.pin_memory}
     val_dl_args_dict = {'dataset': val_ds, 'batch_size': 1, 'shuffle': False, 'num_workers': int(num_workers // 2),
-                        'drop_last': False}
+                        'drop_last': False, 'persistent_workers':config.persistent_workers,
+                          'pin_memory': config.pin_memory}
     test_dl_args_dict = {'dataset': test_ds, 'batch_size': 1, 'shuffle': False, 'num_workers': int(num_workers // 2),
-                         'drop_last': False}
+                         'drop_last': False, 'persistent_workers': config.persistent_workers,
+                          'pin_memory': config.pin_memory}
 
     # Initialize DataLoader
     train_dl = dl_class(**train_dl_args_dict) if train_size > 0 else None

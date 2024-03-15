@@ -1006,7 +1006,9 @@ if __name__ == '__main__':
             train_auc_lr_list = [x for x in train_auc_lr_list if x is not None]
             train_auc_lr_list_mean = round(sum(train_auc_lr_list) / len(train_auc_lr_list),
                                            nr_of_decimals)
-           # dst_folder_name += '_tr_{}_lr_{}'.format(train_auc_list_mean, train_auc_lr_list_mean)
+            dst_folder_name += '_tr_{}'.format(train_auc_list_mean)
+            #dst_folder_name += '_lr_{}'.format(train_auc_lr_list_mean)
+
 
             # Internal validation (avg) and test (ensemble)
             # DL model
