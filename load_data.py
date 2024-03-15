@@ -209,9 +209,11 @@ def get_files(sampling_type, features, filename_stratified_sampling_test_csv, fi
         df_split = df_split[~df_split[patient_id_col].astype(np.int64).isin(exclude_patients)]
 
         # Make sure that files in the dataset folders comprehend with the label in filename_stratified_sampling_test_csv
+        #print(df_split[patient_id_col].tolist())
         for l in labels_unique:
             # patient_ids_l = [x.replace('.npy', '') for x in os.listdir(os.path.join(data_dir, l))]
             patient_ids_l = os.listdir(os.path.join(data_dir, l))
+            #print(patient_ids_l)
             patient_ids_l = [x for x in patient_ids_l if
                              int(x) not in exclude_patients and x in df_split[patient_id_col].tolist()]
             for p in patient_ids_l:
