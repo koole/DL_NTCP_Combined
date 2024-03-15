@@ -81,7 +81,7 @@ strata_groups = ['CT+C_available', 'CT_Artefact', 'Photons']  #, 'Year_treatment
 strata_groups = ['Artefact', 'Taste_M06'] # NOTE: TASTE
 split_col = 'Split'  # (Stratified Sampling). Column of the stratified sampling outcome ('train', 'val', 'test').
 cv_strata_groups = strata_groups  # (TODO: implement) Stratified Cross-Validation groups
-cv_folds = 3  # (Cross-Validation) If cv_folds=1, then perform train-val-test-split.
+cv_folds = 5  # (Cross-Validation) If cv_folds=1, then perform train-val-test-split.
 cv_type = 'stratified'  # (Stratified CV, only if cv_folds > 1) None | 'stratified'. Stratification is performed on endpoint value.
 dataset_type = 'cache'  # 'standard' | 'cache' | 'persistent'. If None, then 'standard'.
 # Cache: caches data in RAM storage. Persistent: caches data in disk storage instead of RAM storage.
