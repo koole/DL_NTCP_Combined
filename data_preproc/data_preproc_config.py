@@ -149,7 +149,7 @@ filename_data_preproc_array_logging_txt = 'data_preproc_array_logging.txt'
 filename_data_preproc_features_logging_txt = 'data_preproc_features_logging.txt'
 filename_endpoints_csv = 'endpoints.csv'
 filename_patient_id_npy = '{patient_id}.npy'  # model's input (Numpy array), concatenation of: CT, RTDOSE and RTSTRUCT
-filename_features_csv = 'stratified_features_full_DAN.csv'
+filename_features_csv = 'features.csv'
 filename_stratified_sampling_csv = 'stratified_sampling.csv'
 # segmentation arrays
 filename_overview_structures_count_csv = 'overview_structures_count.csv'
@@ -164,6 +164,26 @@ else:
 filename_main_logging_txt = 'main_logging.txt'
 
 # Modelling
+
+## NOTE: DYSPHAGIA
+patient_id_col = 'PatientID'
+endpoint = 'Dysphagia_6MO'
+baseline_col = []
+submodels_features = [
+    ['OralCavity_Ext_meandose', 'PCM_Med_meandose', 'PCM_Inf_meandose', 'BSLtox_grade0_1', 'BSLtox_grade2', 'BSLtox_grade3_4', 'Loctum_Pharynx', 'Loctum_Larynx', 'Loctum_OC'],
+    ['PCM_Sup_meandose', 'PCM_Med_meandose', 'PCM_Inf_meandose', 'BSLtox_grade0_1', 'BSLtox_grade2', 'BSLtox_grade3_4', 'Loctum_Pharynx', 'Loctum_Larynx', 'Loctum_OC'],
+]  # Features of submodels. Should be a list of lists. len(submodels_features) = nr_of_submodels. If None, then
+# no fitting of submodels.
+features = ['OralCavity_Ext_meandose', 'PCM_Sup_meandose', 'PCM_Med_meandose', 'PCM_Inf_meandose', 
+            'BSLtox_grade2', 'BSLtox_grade3_4', 'Loctum_Pharynx', 'Loctum_Larynx']  # Features of final model. Elements in submodels_features should
+# be a subset of `features`, i.e. submodels_features can have more distinct features than the final model.
+lr_coefficients = None  # [-4.5710, 0.0341, 0.0267, 0.0107, 0.0151, 1.0627, 1.4610, -0.7115, -0.8734]  # Values starting with coefficient for `intercept`,
+# followed by coefficients of `features` (in the same order). If None, then no predefined coefficients will be used.
+# on our own training dataset
+ext_features = ['CT+C_available', 'CT_Artefact', 'Photons', 'Split']
+
+## NOTE: XEROSTOMIA
+"""
 # data_preproc.py: filename_endpoints_csv
 patient_id_col = 'PatientID'
 endpoint = 'HN35_Xerostomia_M12_class'
@@ -183,6 +203,10 @@ lr_coefficients = None  # [-2.9032, 0.0193, 0.1054, 0.5234, 1.2763]  # Values st
 # followed by coefficients of `features` (in the same order). If None, then no predefined coefficients will be used.
 ext_features = ['HN35_Xerostomia_W01_not_at_all', 'CT+C_available', 'CT_Artefact', 'Photons', 'Loctum2_v2', 'Split',
                 'Gender', 'Age']
+"""
+
+
+
 # (Stratified Sampling)
 # data_preproc.py, check_data_preproc_ct_segmentation_map.py: relevant segmentation structures
 parotis_structures = ['parotis_li', 'parotis_re']

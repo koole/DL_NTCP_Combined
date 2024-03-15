@@ -4,8 +4,10 @@ from functools import partial
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from .layers import Output
-
+#from .layers import Output
+class Output(torch.nn.Linear):
+    def __init__(self, in_features, out_features, bias=True):
+        super(Output, self).__init__(in_features=in_features, out_features=out_features, bias=bias)
 
 def conv3x3x3(in_planes, out_planes, stride=1):
     return nn.Conv3d(in_planes,
@@ -191,6 +193,7 @@ class ResNet_LReLU(nn.Module):
         else:
             linear_units = [output_channel] + linear_units
             for i in range(len(linear_units) - 1):
+                #print(use_bias)
                 self.linear_layers.add_module('dropout%s' % i, torch.nn.Dropout(dropout_p[i]))
 
                 if self.clinical_variables_position + 1 == i:
@@ -392,6 +395,7 @@ def get_resnet_lrelu(model_depth, channels, n_features, filters, lrelu_alpha,
                              **kwargs)
 
     return model
+
 
 
 # def get_model():

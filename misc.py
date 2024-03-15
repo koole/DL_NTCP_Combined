@@ -401,7 +401,7 @@ def get_model(model_name, num_ohe_classes, channels, depth, height, width, n_fea
                                  dropout_p=dropout_p, linear_units=linear_units,
                                  clinical_variables_position=clinical_variables_position,
                                  clinical_variables_linear_units=clinical_variables_linear_units,
-                                 clinical_variables_dropout_p=clinical_variables_dropout_p)
+                                 clinical_variables_dropout_p=clinical_variables_dropout_p, use_bias=use_bias)
     elif model_name == 'resnet_dcnn_lrelu':
         model = ResNet_DCNN_LReLU(n_input_channels=channels, depth=depth, height=height, width=width,
                                   n_features=n_features, num_classes=num_classes, filters=filters,

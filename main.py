@@ -71,8 +71,8 @@ def initialize(torch_version, device, create_folders=True):
             copy_file(src=os.path.join(root_path, f), dst=os.path.join(exp_src_dir, f))
         # Copy folders to exp folder
         copy_folder(src=models_dir, dst=exp_models_dir)
-        copy_folder(src=optimizers_dir, dst=exp_optimizers_dir)
-        copy_folder(src=data_preproc_dir, dst=exp_data_preproc_dir)
+        #copy_folder(src=optimizers_dir, dst=exp_optimizers_dir)
+        #copy_folder(src=data_preproc_dir, dst=exp_data_preproc_dir)
 
         # Logger output filename
         output_filename = os.path.join(exp_dir, 'log.txt')
@@ -983,14 +983,14 @@ if __name__ == '__main__':
                                        '_params_{}'.format(total_params) +
                                        '_auc' +
                                        '_tr_{}'.format(train_auc_value) +
-                                       '_lr_{}'.format(train_auc_lr) +
-                                       '_val_{}'.format(val_auc_value) +
-                                       '_lr_{}'.format(val_auc_lr)
+                                       #'_lr_{}'.format(train_auc_lr) +
+                                       '_val_{}'.format(val_auc_value) # +
+                                       #'_lr_{}'.format(val_auc_lr)
                                        )
 
         if test_dl is not None:
             dst_folder_name += '_test_{}'.format(test_auc_value)
-            dst_folder_name += '_lr_{}'.format(test_auc_lr)
+            #dst_folder_name += '_lr_{}'.format(test_auc_lr)
 
         # Results of all folds (avg and ensemble)
         if (fold == cv_folds - 1) and (cv_folds > 1):
@@ -1006,7 +1006,7 @@ if __name__ == '__main__':
             train_auc_lr_list = [x for x in train_auc_lr_list if x is not None]
             train_auc_lr_list_mean = round(sum(train_auc_lr_list) / len(train_auc_lr_list),
                                            nr_of_decimals)
-            dst_folder_name += '_tr_{}_lr_{}'.format(train_auc_list_mean, train_auc_lr_list_mean)
+           # dst_folder_name += '_tr_{}_lr_{}'.format(train_auc_list_mean, train_auc_lr_list_mean)
 
             # Internal validation (avg) and test (ensemble)
             # DL model
@@ -1027,7 +1027,7 @@ if __name__ == '__main__':
             val_auc_lr_list = [x for x in val_auc_lr_list if x is not None]
             val_auc_lr_list_mean = round(sum(val_auc_lr_list) / len(val_auc_lr_list),
                                          nr_of_decimals)
-            dst_folder_name += '_lr_{}'.format(val_auc_lr_list_mean)
+            #dst_folder_name += '_lr_{}'.format(val_auc_lr_list_mean)
             # Test (ensemble)
             test_auc_lr_mean = misc.compute_auc(y_pred_list=test_y_pred_lr_ens,
                                                 y_true_list=test_y_lr_ens,
@@ -1035,7 +1035,7 @@ if __name__ == '__main__':
 
             # Ensemble
             dst_folder_name += '_ens_{}'.format(test_auc_mean)
-            dst_folder_name += '_lr_{}'.format(test_auc_lr_mean)
+            #dst_folder_name += '_lr_{}'.format(test_auc_lr_mean)
 
         os.rename(src_folder_name, dst_folder_name)
         #shutil.move(src_folder_name, dst_folder_name)
