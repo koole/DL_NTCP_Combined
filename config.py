@@ -29,7 +29,7 @@ import data_preproc.data_preproc_config as data_preproc_config
 from data_preproc.data_preproc_functions import create_folder_if_not_exists
 
 # Whether to perform quick run for checking workability of code or not
-perform_test_run = True
+perform_test_run = False
 
 # Set directory contexts
 root_path = os.getcwd()
@@ -38,7 +38,7 @@ optimizers_dir = os.path.join(root_path, 'optimizers')
 data_preproc_dir = os.path.join(root_path, 'data_preproc')
 save_root_dir = os.path.join(root_path, 'datasets')
 data_dir = os.path.join(save_root_dir, 'hendrike_taste')  # Change this one to the data directory!
-exp_root_dir = os.path.join(root_path, 'experiments', 'taste_test')   # Change this one so that each experiment is put in its own folder!
+exp_root_dir = os.path.join(root_path, 'experiments', 'taste_reproduce_dan_edits')   # Change this one so that each experiment is put in its own folder!
 create_folder_if_not_exists(exp_root_dir)
 exp_name = datetime.now().strftime("%Y%m%d_%H%M%S")
 exp_dir = os.path.join(exp_root_dir, exp_name)
@@ -86,7 +86,7 @@ cv_type = 'stratified'  # (Stratified CV, only if cv_folds > 1) None | 'stratifi
 dataset_type = 'cache'  # 'standard' | 'cache' | 'persistent'. If None, then 'standard'.
 # Cache: caches data in RAM storage. Persistent: caches data in disk storage instead of RAM storage.
 cache_rate = 1.0  # (dataset_type='cache')
-num_workers = 0  # `4 * num_GPUs` (dataset_type='cache')
+num_workers = 8  # `4 * num_GPUs` (dataset_type='cache')
 runtime_cache = 'process'
 persistent_workers = True if num_workers > 0 else False 
 pin_memory = True if num_workers > 0 else False  # Do not change
@@ -157,7 +157,7 @@ rtdose_interpol_mode_2d = 'bilinear'
 segmentation_interpol_mode_2d = 'nearest'  # OLD 'bilinear'
 ct_dose_seg_interpol_mode_2d = 'bilinear'
 # AugMix
-perform_augmix = False
+perform_augmix = True
 mixture_width = 3  # 3 (default)
 mixture_depth = [1, 3]  # [1, 3] (default)
 augmix_strength = 3
@@ -183,7 +183,7 @@ features_dl = ['LEEFTIJD']
 resnet_shortcut = 'B'  # (resnet_original) 'A', 'B'. Pretrained resnet10_original has 'B', resnet18_original has 'A'.
 filters = [16, 16, 32, 64]
 kernel_sizes = [[1,5,5], [1,4,4], [1,3,3], [1,3,3]]
-strides = [[2]*3, [2]*3, [2]*3, [1]*3]  # strides>2 currently not supported.
+strides = [[2]*3, [2]*3, [2]*3, [2]*3]  # strides>2 currently not supported.
 # Usually len(kernel_sizes) == len(filters), but len(kernel_sizes) > len(filters) is often allowed, but then
 # kernel_sizes[:len(filters)] will be used. Similarly for strides.
 pad_value = 0  # (Padding) Value used for padding.
@@ -263,7 +263,7 @@ manual_lr = [1e-3, 1e-5, 1e-6]  # (Manual_LR) LR per epoch, if epoch > len(manua
 # Training config
 nr_runs = 1
 max_epochs = 100
-batch_size = 2
+batch_size = 8
 max_batch_size = 16
 eval_interval = 1
 patience = 10  # (EarlyStopping): stop training after this number of consecutive epochs without
