@@ -29,9 +29,6 @@ from datetime import datetime
 import data_preproc.data_preproc_config as data_preproc_config
 from data_preproc.data_preproc_functions import create_folder_if_not_exists
 
-# Whether to perform quick run for checking workability of code or not
-perform_test_run = True
-
 # Set directory contexts
 root_path = os.getcwd()
 models_dir = os.path.join(root_path, "models")
@@ -401,22 +398,3 @@ patience = (
     10  # (EarlyStopping): stop training after this number of consecutive epochs without
 )
 # internal validation improvements.
-
-# Plotting config
-plot_interval = 10
-max_nr_images_per_interval = 1
-figsize = (12, 12)
-
-if perform_test_run:
-    lr_finder_num_iter = 0
-    n_samples = 50
-    nr_runs = 1
-    max_epochs = 2
-    train_frac = 0.33
-    val_frac = 0.33
-    cv_folds = 3
-    batch_size = 4
-    num_workers = 0
-    pin_memory = False
-    plot_interval = 1
-    max_nr_images_per_interval = 5
