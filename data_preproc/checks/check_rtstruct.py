@@ -17,8 +17,8 @@ import pandas as pd
 from tqdm import tqdm
 from glob import glob
 
-import data_preproc_config as cfg
-from data_preproc_functions import get_all_folders, Logger, sort_human
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import get_all_folders, Logger, sort_human
 from data_preproc_ct_segmentation_map_citor import dcmread, read_ds
 
 

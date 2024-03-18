@@ -1,8 +1,8 @@
 import os
 import time
 
-import data_preproc_config as cfg
-from data_preproc_functions import Logger
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import Logger
 
 import data_folder_types
 import data_collection

@@ -9,8 +9,8 @@ import time
 import json
 from tqdm import tqdm
 
-import data_preproc_config as cfg
-from data_preproc_functions import copy_folder, Logger, set_default, sort_human
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import copy_folder, Logger, set_default, sort_human
 
 
 def main_save_structures_values():

@@ -37,12 +37,20 @@ def preprocess_inputs(inputs, ct_mean, ct_std, rtdose_mean, rtdose_std):
 
     """
     # Standardization
-    ct_scaler = ScaleIntensityRange(a_min=config.ct_a_min, a_max=config.ct_a_max,
-                                    b_min=config.ct_b_min, b_max=config.ct_b_max,
-                                    clip=config.ct_clip)
-    rtdose_scaler = ScaleIntensityRange(a_min=config.rtdose_a_min, a_max=config.rtdose_a_max,
-                                        b_min=config.rtdose_b_min, b_max=config.rtdose_b_max,
-                                        clip=config.rtdose_clip)
+    ct_scaler = ScaleIntensityRange(
+        a_min=config.ct_a_min,
+        a_max=config.ct_a_max,
+        b_min=config.ct_b_min,
+        b_max=config.ct_b_max,
+        clip=config.ct_clip,
+    )
+    rtdose_scaler = ScaleIntensityRange(
+        a_min=config.rtdose_a_min,
+        a_max=config.rtdose_a_max,
+        b_min=config.rtdose_b_min,
+        b_max=config.rtdose_b_max,
+        clip=config.rtdose_clip,
+    )
     # ScaleIntensityRange(keys=['segmentation_map'],
     #                     a_min=config.segmentation_map_a_min, a_max=config.segmentation_map_a_max,
     #                     b_min=config.segmentation_map_b_min, b_max=config.segmentation_map_b_max,
@@ -97,9 +105,14 @@ def flip(arr, mode, strength, seed):
 def translate(arr, mode, strength, seed):
     # augmenter = RandAffine(prob=1.0, translate_range=(7 * strength, 7 * strength, 7 * strength),
     #                        padding_mode='border', mode=mode),  # 3D: (num_channels, H, W[, D])
-    augmenter = Rand3DElastic(prob=1.0, sigma_range=(5, 8), magnitude_range=(0, 1),
-                              translate_range=(round(7 * strength), round(7 * strength), round(7 * strength)),
-                              padding_mode='border', mode=mode)
+    augmenter = Rand3DElastic(
+        prob=1.0,
+        sigma_range=(5, 8),
+        magnitude_range=(0, 1),
+        translate_range=(round(7 * strength), round(7 * strength), round(7 * strength)),
+        padding_mode="border",
+        mode=mode,
+    )
     augmenter.set_random_state(seed=seed)
     return augmenter(arr)
 
@@ -107,9 +120,18 @@ def translate(arr, mode, strength, seed):
 def rotate(arr, mode, strength, seed):
     # augmenter = RandRotate(prob=1.0, range_x=(np.pi / 24) * strength, align_corners=True,
     #                        padding_mode='border', mode=mode),
-    augmenter = Rand3DElastic(prob=1.0, sigma_range=(5, 8), magnitude_range=(0, 1),
-                              rotate_range=((np.pi / 24) * strength, (np.pi / 24) * strength, (np.pi / 24) * strength),
-                              padding_mode='border', mode=mode)
+    augmenter = Rand3DElastic(
+        prob=1.0,
+        sigma_range=(5, 8),
+        magnitude_range=(0, 1),
+        rotate_range=(
+            (np.pi / 24) * strength,
+            (np.pi / 24) * strength,
+            (np.pi / 24) * strength,
+        ),
+        padding_mode="border",
+        mode=mode,
+    )
     augmenter.set_random_state(seed=seed)
     return augmenter(arr)
 
@@ -117,9 +139,14 @@ def rotate(arr, mode, strength, seed):
 def scale(arr, mode, strength, seed):
     # augmenter = RandAffine(prob=1.0, scale_range=(0.07 * strength, 0.07 * strength, 0.07 * strength),
     #                        padding_mode='border', mode=mode),  # 3D: (num_channels, H, W[, D])
-    augmenter = Rand3DElastic(prob=1.0, sigma_range=(5, 8), magnitude_range=(0, 1),
-                              scale_range=(0.07 * strength, 0.07 * strength, 0.07 * strength),
-                              padding_mode='border', mode=mode)
+    augmenter = Rand3DElastic(
+        prob=1.0,
+        sigma_range=(5, 8),
+        magnitude_range=(0, 1),
+        scale_range=(0.07 * strength, 0.07 * strength, 0.07 * strength),
+        padding_mode="border",
+        mode=mode,
+    )
     augmenter.set_random_state(seed=seed)
     return augmenter(arr)
 
@@ -212,13 +239,26 @@ def aug_mix(arr, mixture_width, mixture_depth, augmix_strength, device, seed):
             seed_i = random.getrandbits(32)
 
             # CT
-            image_aug[0] = op(arr=image_aug[0], mode=config.ct_interpol_mode_2d, strength=augmix_strength, seed=seed_i)
+            image_aug[0] = op(
+                arr=image_aug[0],
+                mode=config.ct_interpol_mode_2d,
+                strength=augmix_strength,
+                seed=seed_i,
+            )
             # RTDOSE
-            image_aug[1] = op(arr=image_aug[1], mode=config.rtdose_interpol_mode_2d, strength=augmix_strength,
-                              seed=seed_i)
+            image_aug[1] = op(
+                arr=image_aug[1],
+                mode=config.rtdose_interpol_mode_2d,
+                strength=augmix_strength,
+                seed=seed_i,
+            )
             # Segmentation
-            image_aug[2] = op(arr=image_aug[2], mode=config.segmentation_interpol_mode_2d, strength=augmix_strength,
-                              seed=seed_i)
+            image_aug[2] = op(
+                arr=image_aug[2],
+                mode=config.segmentation_interpol_mode_2d,
+                strength=augmix_strength,
+                seed=seed_i,
+            )
 
         # Preprocessing commutes since all coefficients are convex
         mix += ws[i] * image_aug
@@ -226,6 +266,3 @@ def aug_mix(arr, mixture_width, mixture_depth, augmix_strength, device, seed):
     mixed = (1 - m) * arr + m * mix
 
     return mixed
-
-
-

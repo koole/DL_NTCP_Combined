@@ -22,8 +22,8 @@ from glob import glob
 from tqdm import tqdm
 from pydicom import dcmread
 
-import data_preproc_config as cfg
-from data_preproc_functions import (copy_folder, create_folder_if_not_exists, get_all_folders,
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import (copy_folder, create_folder_if_not_exists, get_all_folders,
                                     get_folders_diff_or_intersection, Logger, sort_human)
 
 

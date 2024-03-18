@@ -87,8 +87,8 @@ from glob import glob
 from tqdm import tqdm
 from pydicom import dcmread
 
-import data_preproc_config as cfg
-from data_preproc_functions import create_folder_if_not_exists, get_all_folders, Logger, set_default, sort_human
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import create_folder_if_not_exists, get_all_folders, Logger, set_default, sort_human
 
 
 def load_ct(path_ct, logger):

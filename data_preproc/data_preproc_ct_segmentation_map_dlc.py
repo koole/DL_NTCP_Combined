@@ -29,8 +29,8 @@ from tqdm import tqdm
 from glob import glob
 from pydicom import dcmread
 
-import data_preproc_config as cfg
-from data_preproc_functions import (create_folder_if_not_exists, get_all_folders, list_to_txt_str, Logger, set_default,
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import (create_folder_if_not_exists, get_all_folders, list_to_txt_str, Logger, set_default,
                                     sort_human)
 from data_preproc_ct_segmentation_map_citor import (read_ds, get_segmentation_map, main_overview_segmentation_map)
 

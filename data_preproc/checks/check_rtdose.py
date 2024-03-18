@@ -14,11 +14,11 @@ import os
 import time
 import pandas as pd
 import SimpleITK as sitk
-import data_preproc_config as cfg
+import data_preproc.data_preproc_config as cfg
 
 from tqdm import tqdm
 from glob import glob
-from data_preproc_functions import get_all_folders, Logger, sort_human
+from data_preproc.data_preproc_functions import get_all_folders, Logger, sort_human
 from data_preproc_ct_rtdose import load_rtdose_file
 
 

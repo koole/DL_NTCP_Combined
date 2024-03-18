@@ -47,9 +47,9 @@ import pandas as pd
 import SimpleITK as sitk
 from tqdm import tqdm
 
-import data_preproc_config as cfg
-from data_preproc_functions import create_folder_if_not_exists, Logger, sort_human
-from data_preproc_ct_segmentation_map_citor import add_segmentation_maps, main_overview_segmentation_map
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import create_folder_if_not_exists, Logger, sort_human
+from data_preproc.data_preproc_ct_segmentation_map_citor import add_segmentation_maps, main_overview_segmentation_map
 
 
 def get_subset_segmentation_map(segmentation_map, structures, structures_value_dict, as_binary, logger):

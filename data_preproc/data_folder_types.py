@@ -9,8 +9,8 @@ import time
 import pandas as pd
 from tqdm import tqdm
 
-import data_preproc_config as cfg
-from data_preproc_functions import Logger, sort_human
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import Logger, sort_human
 
 
 def main():

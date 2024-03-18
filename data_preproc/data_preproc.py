@@ -62,8 +62,8 @@ import pandas as pd
 from tqdm import tqdm
 from monai.transforms import Compose, Resize
 
-import data_preproc_config as cfg
-from data_preproc_functions import copy_file, copy_folder, create_folder_if_not_exists, Logger
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import copy_file, copy_folder, create_folder_if_not_exists, Logger
 from data_preproc_ct_segmentation_map import spacing_correction
 
 

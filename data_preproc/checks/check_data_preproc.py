@@ -32,8 +32,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-import data_preproc_config as cfg
-from data_preproc_functions import create_folder_if_not_exists, Logger, sort_human
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import create_folder_if_not_exists, Logger, sort_human
 
 
 def plot_arr(arr, nr_images, figsize, cmap, colorbar_title, filename, vmin=None, vmax=None, ticks_steps=None,

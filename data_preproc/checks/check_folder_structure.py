@@ -18,8 +18,8 @@ import pandas as pd
 from tqdm import tqdm
 from glob import glob
 
-import data_preproc_config as cfg
-from data_preproc_functions import get_all_folders, Logger, sort_human
+import data_preproc.data_preproc_config as cfg
+from data_preproc.data_preproc_functions import get_all_folders, Logger, sort_human
 
 
 def main_ct(df, data_dir, patient_id, folder_type, src, logger):
