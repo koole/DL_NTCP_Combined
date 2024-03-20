@@ -1,8 +1,12 @@
+import os
+
 # "xerostomia", "taste", "dysphagia"
-toxicity = "xerostomia"
+toxicity = os.getenv("TOX")
+if toxicity is None:
+    toxicity = "xerostomia"
+
 # Whether to perform quick run for checking workability of code or not
 perform_test_run = True
-
 
 from tox_configs.base import *
 

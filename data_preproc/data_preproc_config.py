@@ -2,6 +2,7 @@
 Configuration file: containing global variables.
 """
 import os
+import config_preproc
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -207,20 +208,13 @@ ext_features = ['HN35_Xerostomia_W01_not_at_all', 'CT+C_available', 'CT_Artefact
                 'Gender', 'Age']
 """
 
-# NOTE: TASTE
 patient_id_col = 'PatientID'
-endpoint = 'Taste_M06'
-baseline_col = 'Taste_W01'
-submodels_features = [
-    ['Parotid_meandose', 'OralCavity_Ext_meandose', 'LEEFTIJD'],
-]  # Features of submodels. Should be a list of lists. len(submodels_features) = nr_of_submodels. If None, then
-# no fitting of submodels.
-features = ['Parotid_meandose', 'OralCavity_Ext_meandose', 'LEEFTIJD']  # Features of final model. Elements in submodels_features should
-# be a subset of `features`, i.e. submodels_features can have more distinct features than the final model.
-#####
-lr_coefficients = None  # [-2.9032, 0.0193, 0.1054, 0.5234, 1.2763]  # Values starting with coefficient for `intercept`,
-# followed by coefficients of `features` (in the same order). If None, then no predefined coefficients will be used.
-ext_features = ['Artefact', 'LEEFTIJD']
+endpoint = config_preproc.preproc_endpoint
+baseline_col = config_preproc.preproc_baseline_col
+submodels_features = config_preproc.preproc_submodels_features
+features = config_preproc.preproc_features
+lr_coefficients = config_preproc.preproc_lr_coefficients
+ext_features = config_preproc.preproc_ext_features
 
 
 # (Stratified Sampling)

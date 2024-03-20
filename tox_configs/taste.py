@@ -14,9 +14,6 @@ User-specific:
 - config.strata_groups
 - config.segmentation_structures
 - config.features_dl  # Features for Deep Learning model
-- data_preproc_config.endpoint
-- data_preproc_config.features  # Features for Logistic Regression model
-- (optional) data_preproc_config.lr_coefficients # Pretrained coefficients for Logistic Regression model
 """
 
 import os
