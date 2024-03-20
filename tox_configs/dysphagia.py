@@ -92,6 +92,8 @@ dataset_type = "cache"  # 'standard' | 'cache' | 'persistent'. If None, then 'st
 # Cache: caches data in RAM storage. Persistent: caches data in disk storage instead of RAM storage.
 cache_rate = 1.0  # (dataset_type='cache')
 num_workers = 8  # `4 * num_GPUs` (dataset_type='cache')
+runtime_cache = 'process'
+persistent_workers = True if num_workers > 0 else False 
 pin_memory = True if num_workers > 0 else False  # Do not change
 to_device = False  # if num_workers > 0 else True  # Whether or not to apply `ToDeviced()` in Dataset' transforms.
 # See load_data.py. Suggestion: set True on HPC, set False on local computer.

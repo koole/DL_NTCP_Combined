@@ -1,4 +1,5 @@
-# "xerostomia", "taste", "dysphagia"
+import os
+
 toxicity = os.getenv("TOX")
 
 if toxicity is None:

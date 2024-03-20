@@ -1,7 +1,11 @@
 import os
 
+# To swap toxicities without changing code, set
+# environment variable TOX to one of these:
 # "xerostomia", "taste", "dysphagia"
 toxicity = os.getenv("TOX")
+
+# If no environment variable is set, default to xerostomia
 if toxicity is None:
     toxicity = "xerostomia"
 
